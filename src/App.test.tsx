@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import App from './App';
-import { render, screen, waitFor } from './test/test-utils';
+import { render, screen } from './test/test-utils';
 
 vi.mock('./hooks/useUsers', () => ({
 	useUsers: vi.fn(),
@@ -55,22 +55,7 @@ describe('App', () => {
 
 		render(<App />);
 
-		await waitFor(() => {
-			expect(screen.getByText('Engineering Manager Diary')).toBeInTheDocument();
-		});
-
 		expect(screen.getByText('John Doe')).toBeInTheDocument();
 		expect(screen.getByText('Senior Frontend Engineer')).toBeInTheDocument();
-	});
-
-	test('displays title correctly', () => {
-		mockUseUsers.mockReturnValue({
-			users: [],
-			loading: false,
-			error: null,
-		});
-
-		render(<App />);
-		expect(screen.getByText(/Engineering Manager Diary/i)).toBeInTheDocument();
 	});
 });

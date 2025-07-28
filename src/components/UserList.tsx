@@ -13,7 +13,7 @@ export const UserList = ({ users }: UserListProps) => {
 					role="article"
 					className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200"
 				>
-					<div className="flex items-center space-x-4 mb-4">
+					<div className="flex items-center space-x-4">
 						<div>
 							<h3 className="text-xl font-semibold text-gray-900">{user.name}</h3>
 							<p className="text-gray-600">{user.role}</p>

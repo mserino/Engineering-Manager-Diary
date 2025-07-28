@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "name": "John Doe",
+        "role": "Senior Frontend Engineer",
+        "birthday": "1990-01-01",
+        "hiringDate": "2020-01-01",
+        "location": "New York, NY"
+    },
+    {
+        "id": 2,
+        "name": "Jane Doe",
+        "role": "Senior Backend Engineer",
+        "birthday": "1990-01-01",
+        "hiringDate": "2020-01-01",
+        "location": "San Francisco, CA"
+    },
+    {
+        "id": 3,
+        "name": "Jim Doe",
+        "role": "Engineering Manager",
+        "birthday": "1990-01-01",
+        "hiringDate": "2020-01-01",
+        "location": "Los Angeles, CA"
+    }
+]

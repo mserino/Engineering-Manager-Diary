@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { User } from '../types/User';
-import usersData from '../data/users.json';
+import { userService } from '../services/userService';
 
 export const useUsers = () => {
 	const [users, setUsers] = useState<User[]>([]);
@@ -8,13 +8,20 @@ export const useUsers = () => {
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		try {
-			setUsers(usersData as User[]);
-			setLoading(false);
-		} catch {
-			setError('Failed to load users');
-			setLoading(false);
-		}
+		const fetchUsers = async () => {
+			try {
+				setLoading(true);
+				const fetchedUsers = await userService.getAllUsers();
+				setUsers(fetchedUsers);
+				setError(null);
+			} catch {
+				setError('Failed to load users');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchUsers();
 	}, []);
 
 	return { users, loading, error };

@@ -4,7 +4,7 @@ import { useUser } from '../hooks/useUser';
 
 export const UserPage = () => {
 	const { id } = useParams<{ id: string }>();
-	const userId = parseInt(id || '0', 10);
+	const userId = id || '';
 	const { user, loading, error } = useUser(userId);
 
 	if (loading) {

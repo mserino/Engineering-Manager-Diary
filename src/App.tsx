@@ -8,7 +8,7 @@ function HomePage() {
 
 	if (loading) {
 		return (
-			<div className="flex items-center justify-center container">
+			<div className="emd-container">
 				<div className="text-xl text-gray-600">Loading users...</div>
 			</div>
 		);
@@ -16,7 +16,7 @@ function HomePage() {
 
 	if (error) {
 		return (
-			<div className="flex items-center justify-center container">
+			<div className="emd-container">
 				<div className="text-xl text-red-600">{error}</div>
 			</div>
 		);

@@ -38,7 +38,7 @@ describe('App', () => {
 	test('displays users when data loads successfully', async () => {
 		const mockUsers = [
 			{
-				id: 1,
+				id: "1",
 				name: 'John Doe',
 				role: 'Senior Frontend Engineer',
 				birthday: '1990-01-01',

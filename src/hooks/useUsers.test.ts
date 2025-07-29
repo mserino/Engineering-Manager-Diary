@@ -1,26 +1,31 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useUsers } from './useUsers';
+import type { User } from '../types/User';
 
-vi.mock('../data/users.json', () => ({
-	default: [
-		{
-			id: 1,
-			name: 'John Doe',
-			role: 'Senior Frontend Engineer',
-			birthday: '1990-01-01',
-			hiringDate: '2020-01-01',
-			location: 'New York, NY',
-		},
-		{
-			id: 2,
-			name: 'Jane Smith',
-			role: 'Senior Backend Engineer',
-			birthday: '1985-05-15',
-			hiringDate: '2019-03-15',
-			location: 'San Francisco, CA',
-		},
-	],
+const mockUsers: User[] = [
+	{
+		id: "1",
+		name: 'John Doe',
+		role: 'Senior Frontend Engineer',
+		birthday: '1990-01-01',
+		hiringDate: '2020-01-01',
+		location: 'New York, NY',
+	},
+	{
+		id: 2,
+		name: 'Jane Smith',
+		role: 'Senior Backend Engineer',
+		birthday: '1985-05-15',
+		hiringDate: '2019-03-15',
+		location: 'San Francisco, CA',
+	},
+];
+
+vi.mock('../services/userService', () => ({
+	userService: {
+		getAllUsers: vi.fn(),
+	},
 }));
 
 describe('useUsers', () => {
@@ -29,6 +34,9 @@ describe('useUsers', () => {
 	});
 
 	test('returns users data successfully', async () => {
+		const { userService } = await import('../services/userService');
+		vi.mocked(userService.getAllUsers).mockResolvedValue(mockUsers);
+
 		const { result } = renderHook(() => useUsers());
 
 		await waitFor(() => {
@@ -42,6 +50,9 @@ describe('useUsers', () => {
 	});
 
 	test('returns correct user structure', async () => {
+		const { userService } = await import('../services/userService');
+		vi.mocked(userService.getAllUsers).mockResolvedValue(mockUsers);
+
 		const { result } = renderHook(() => useUsers());
 
 		await waitFor(() => {
@@ -57,11 +68,25 @@ describe('useUsers', () => {
 		expect(user).toHaveProperty('location');
 	});
 
-	test('returns loading as false and users as empty array initially', () => {
+	test('initially returns loading state', () => {
 		const { result } = renderHook(() => useUsers());
 
-		expect(result.current.loading).toBe(false);
-		expect(result.current.users).toHaveLength(2);
+		expect(result.current.loading).toBe(true);
+		expect(result.current.users).toHaveLength(0);
 		expect(result.current.error).toBe(null);
+	});
+
+	test('handles error when service fails', async () => {
+		const { userService } = await import('../services/userService');
+		vi.mocked(userService.getAllUsers).mockRejectedValue(new Error('Service error'));
+
+		const { result } = renderHook(() => useUsers());
+
+		await waitFor(() => {
+			expect(result.current.loading).toBe(false);
+		});
+
+		expect(result.current.error).toBe('Failed to load users');
+		expect(result.current.users).toHaveLength(0);
 	});
 }); 

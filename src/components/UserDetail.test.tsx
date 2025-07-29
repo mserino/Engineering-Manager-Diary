@@ -4,7 +4,7 @@ import { UserDetail } from './UserDetail';
 import type { User } from '../types/User';
 
 const mockUser: User = {
-	id: 1,
+	id: "1",
 	name: 'John Doe',
 	role: 'Senior Frontend Engineer',
 	birthday: '1990-01-01',

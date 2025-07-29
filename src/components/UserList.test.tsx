@@ -5,7 +5,7 @@ import type { User } from '../types/User';
 
 const mockUsers: User[] = [
 	{
-		id: 1,
+		id: "1",
 		name: 'John Doe',
 		role: 'Senior Frontend Engineer',
 		birthday: '1990-01-01',
@@ -13,7 +13,7 @@ const mockUsers: User[] = [
 		location: 'New York, NY',
 	},
 	{
-		id: 2,
+		id: "2",
 		name: 'Alice Smith',
 		role: 'Senior Backend Engineer',
 		birthday: '1985-05-15',

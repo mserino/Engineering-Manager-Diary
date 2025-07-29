@@ -4,6 +4,7 @@ import { useUsers } from './hooks/useUsers';
 import { UserPage } from './pages/UserPage';
 import { AddUserForm } from './components/AddUserForm';
 import { UserProvider } from './contexts/UserContext';
+import { Spinner } from './components/Spinner';
 
 function HomePage() {
 	const { users, loading, error } = useUsers();
@@ -11,7 +12,9 @@ function HomePage() {
 	if (loading) {
 		return (
 			<div className="emd-container">
-				<div className="text-xl text-gray-600">Loading users...</div>
+				<div className="flex justify-center items-center py-12">
+					<Spinner size="lg" />
+				</div>
 			</div>
 		);
 	}

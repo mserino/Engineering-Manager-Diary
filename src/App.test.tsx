@@ -21,7 +21,7 @@ describe('App', () => {
 		});
 
 		render(<App />);
-		expect(screen.getByText(/Loading users/i)).toBeInTheDocument();
+		expect(screen.getByRole('status')).toBeInTheDocument();
 	});
 
 	test('displays error state when data fails to load', () => {

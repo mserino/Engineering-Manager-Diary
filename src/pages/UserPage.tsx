@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { UserDetail } from '../components/UserDetail';
 import { useUser } from '../hooks/useUser';
+import { Spinner } from '../components/Spinner';
 
 export const UserPage = () => {
 	const { id } = useParams<{ id: string }>();
@@ -10,7 +11,9 @@ export const UserPage = () => {
 	if (loading) {
 		return (
 			<div className="emd-container">
-				<div className="text-xl text-gray-600">Loading user...</div>
+				<div className="flex justify-center items-center py-12">
+					<Spinner size="lg" />
+				</div>
 			</div>
 		);
 	}

@@ -1,11 +1,13 @@
+import type { ReactNode } from 'react';
+
 interface ConfirmationModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
 	title: string;
 	message: string;
-	confirmText?: string;
-	cancelText?: string;
+	confirmText?: ReactNode;
+	cancelText?: ReactNode;
 	confirmButtonClassName?: string;
 }
 

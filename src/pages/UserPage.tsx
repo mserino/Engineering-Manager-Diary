@@ -22,7 +22,7 @@ export const UserPage = () => {
 					<div className="text-xl text-red-600 mb-4">{error || 'User not found'}</div>
 					<a
 						href="/"
-						className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+						className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
 					>
 						← Back to Users
 					</a>

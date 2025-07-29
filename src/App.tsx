@@ -31,7 +31,7 @@ function HomePage() {
 					<h1 className="text-3xl font-bold text-gray-900">Team Members</h1>
 					<a
 						href="/add-user"
-						className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+						className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
 					>
 						Add a new team member
 					</a>

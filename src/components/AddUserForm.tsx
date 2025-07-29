@@ -135,13 +135,13 @@ export const AddUserForm = () => {
 						<button
 							type="submit"
 							disabled={loading}
-							className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+							className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
 						>
 							{loading ? 'Adding...' : 'Add Team Member'}
 						</button>
 						<a
 							href="/"
-							className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-center"
+							className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-center cursor-pointer"
 						>
 							Cancel
 						</a>

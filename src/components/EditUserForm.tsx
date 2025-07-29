@@ -142,14 +142,14 @@ export const EditUserForm = ({ user, onCancel }: EditUserFormProps) => {
 						<button
 							type="submit"
 							disabled={loading}
-							className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+							className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
 						>
 							{loading ? 'Updating...' : 'Update Team Member'}
 						</button>
 						<button
 							type="button"
 							onClick={onCancel}
-							className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors duration-200"
+							className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors duration-200 cursor-pointer"
 						>
 							Cancel
 						</button>

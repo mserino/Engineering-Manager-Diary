@@ -56,13 +56,13 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 						<div className="flex gap-3">
 							<button
 								onClick={() => setIsEditing(true)}
-								className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+								className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
 							>
 								Edit
 							</button>
 							<button
 								onClick={() => setShowDeleteModal(true)}
-								className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200"
+								className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 cursor-pointer"
 							>
 								Remove User
 							</button>
@@ -95,7 +95,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 						<div className="pt-4">
 							<a
 								href="/"
-								className="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200"
+								className="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 cursor-pointer"
 							>
 								← Back to Users
 							</a>

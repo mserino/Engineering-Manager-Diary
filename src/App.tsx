@@ -3,6 +3,7 @@ import { UserList } from './components/UserList';
 import { useUsers } from './hooks/useUsers';
 import { UserPage } from './pages/UserPage';
 import { AddUserForm } from './components/AddUserForm';
+import { UserProvider } from './contexts/UserContext';
 
 function HomePage() {
 	const { users, loading, error } = useUsers();
@@ -43,13 +44,15 @@ function HomePage() {
 
 function App() {
 	return (
-		<Router>
-			<Routes>
-				<Route path="/" element={<HomePage />} />
-				<Route path="/user/:id" element={<UserPage />} />
-				<Route path="/add-user" element={<AddUserForm />} />
-			</Routes>
-		</Router>
+		<UserProvider>
+			<Router>
+				<Routes>
+					<Route path="/" element={<HomePage />} />
+					<Route path="/user/:id" element={<UserPage />} />
+					<Route path="/add-user" element={<AddUserForm />} />
+				</Routes>
+			</Router>
+		</UserProvider>
 	);
 }
 

@@ -1,16 +1,20 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../hooks/useUserContext';
+import type { User } from '../types/User';
 
-export const AddUserForm = () => {
-	const navigate = useNavigate();
-	const { createUser } = useUserContext();
+interface EditUserFormProps {
+	user: User;
+	onCancel: () => void;
+}
+
+export const EditUserForm = ({ user, onCancel }: EditUserFormProps) => {
+	const { updateUser } = useUserContext();
 	const [formData, setFormData] = useState({
-		name: '',
-		role: '',
-		birthday: '',
-		hiringDate: '',
-		location: '',
+		name: user.name,
+		role: user.role,
+		birthday: user.birthday,
+		hiringDate: user.hiringDate,
+		location: user.location,
 	});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -29,21 +33,24 @@ export const AddUserForm = () => {
 		setError(null);
 
 		try {
-			await createUser(formData);
-			navigate('/');
-		} catch {
-			setError('Failed to create user. Please try again.');
+			console.log('Updating user:', user.id, formData);
+			await updateUser(user.id, formData);
+			console.log('User updated successfully, exiting edit mode');
+			onCancel(); // Exit edit mode instead of navigating
+		} catch (err) {
+			console.error('Error updating user:', err);
+			setError('Failed to update user. Please try again.');
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	return (
-		<div className="emd-container">
+		<div className="max-w-2xl mx-auto p-6">
 			<div className="bg-white rounded-lg shadow-lg p-8">
 				<div className="mb-8">
-					<h1 className="text-3xl font-bold text-gray-900">Add New Team Member</h1>
-					<p className="text-gray-600 mt-2">Fill in the details below to add a new team member.</p>
+					<h1 className="text-3xl font-bold text-gray-900">Edit Team Member</h1>
+					<p className="text-gray-600 mt-2">Update the details below for {user.name}.</p>
 				</div>
 
 				{error && (
@@ -55,7 +62,7 @@ export const AddUserForm = () => {
 				<form onSubmit={handleSubmit} className="space-y-6">
 					<div>
 						<label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-							Full Name <span className="text-red-500">*</span>
+							Full Name *
 						</label>
 						<input
 							type="text"
@@ -71,7 +78,7 @@ export const AddUserForm = () => {
 
 					<div>
 						<label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-							Role <span className="text-red-500">*</span>
+							Role *
 						</label>
 						<input
 							type="text"
@@ -87,7 +94,7 @@ export const AddUserForm = () => {
 
 					<div>
 						<label htmlFor="birthday" className="block text-sm font-medium text-gray-700 mb-2">
-							Birthday <span className="text-red-500">*</span>
+							Birthday *
 						</label>
 						<input
 							type="date"
@@ -102,7 +109,7 @@ export const AddUserForm = () => {
 
 					<div>
 						<label htmlFor="hiringDate" className="block text-sm font-medium text-gray-700 mb-2">
-							Hiring Date <span className="text-red-500">*</span>
+							Hiring Date *
 						</label>
 						<input
 							type="date"
@@ -117,7 +124,7 @@ export const AddUserForm = () => {
 
 					<div>
 						<label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-							Location <span className="text-red-500">*</span>
+							Location *
 						</label>
 						<input
 							type="text"
@@ -137,14 +144,15 @@ export const AddUserForm = () => {
 							disabled={loading}
 							className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
 						>
-							{loading ? 'Adding...' : 'Add Team Member'}
+							{loading ? 'Updating...' : 'Update Team Member'}
 						</button>
-						<a
-							href="/"
-							className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-center"
+						<button
+							type="button"
+							onClick={onCancel}
+							className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors duration-200"
 						>
 							Cancel
-						</a>
+						</button>
 					</div>
 				</form>
 			</div>

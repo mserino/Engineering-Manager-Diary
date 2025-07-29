@@ -2,16 +2,17 @@ import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '../test/test-utils';
 import { AddUserForm } from './AddUserForm';
 
+const mockCreateUser = vi.fn();
 const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', () => ({
 	useNavigate: () => mockNavigate,
 }));
 
-vi.mock('../services/userService', () => ({
-	userService: {
-		createUser: vi.fn(),
-	},
+vi.mock('../hooks/useUserContext', () => ({
+	useUserContext: () => ({
+		createUser: mockCreateUser,
+	}),
 }));
 
 describe('AddUserForm', () => {
@@ -51,16 +52,7 @@ describe('AddUserForm', () => {
 	});
 
 	test('submits form with user data', async () => {
-		const { userService } = await import('../services/userService');
-		
-		vi.mocked(userService.createUser).mockResolvedValue({
-			id: 'test-id',
-			name: 'John Doe',
-			role: 'Developer',
-			birthday: '1990-01-01',
-			hiringDate: '2020-01-01',
-			location: 'New York, NY',
-		});
+		mockCreateUser.mockResolvedValue({});
 
 		render(<AddUserForm />);
 
@@ -73,7 +65,7 @@ describe('AddUserForm', () => {
 		fireEvent.click(screen.getByText('Add Team Member'));
 
 		await waitFor(() => {
-			expect(userService.createUser).toHaveBeenCalledWith({
+			expect(mockCreateUser).toHaveBeenCalledWith({
 				name: 'John Doe',
 				role: 'Developer',
 				birthday: '1990-01-01',
@@ -88,9 +80,7 @@ describe('AddUserForm', () => {
 	});
 
 	test('shows loading state during submission', async () => {
-		const { userService } = await import('../services/userService');
-		
-		vi.mocked(userService.createUser).mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+		mockCreateUser.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
 
 		render(<AddUserForm />);
 
@@ -106,9 +96,7 @@ describe('AddUserForm', () => {
 	});
 
 	test('shows error message on submission failure', async () => {
-		const { userService } = await import('../services/userService');
-		
-		vi.mocked(userService.createUser).mockRejectedValue(new Error('Failed'));
+		mockCreateUser.mockRejectedValue(new Error('Failed'));
 
 		render(<AddUserForm />);
 

@@ -1,9 +1,8 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useUsers } from './useUsers';
-import type { User } from '../types/User';
 
-const mockUsers: User[] = [
+const mockUsers = [
 	{
 		id: "1",
 		name: 'John Doe',
@@ -22,10 +21,15 @@ const mockUsers: User[] = [
 	},
 ];
 
-vi.mock('../services/userService', () => ({
-	userService: {
-		getAllUsers: vi.fn(),
-	},
+const mockFetchUsers = vi.fn();
+
+vi.mock('./useUserContext', () => ({
+	useUserContext: () => ({
+		users: mockUsers,
+		loading: false,
+		error: null,
+		fetchUsers: mockFetchUsers,
+	}),
 }));
 
 describe('useUsers', () => {
@@ -34,9 +38,6 @@ describe('useUsers', () => {
 	});
 
 	test('returns users data successfully', async () => {
-		const { userService } = await import('../services/userService');
-		vi.mocked(userService.getAllUsers).mockResolvedValue(mockUsers);
-
 		const { result } = renderHook(() => useUsers());
 
 		await waitFor(() => {
@@ -50,9 +51,6 @@ describe('useUsers', () => {
 	});
 
 	test('returns correct user structure', async () => {
-		const { userService } = await import('../services/userService');
-		vi.mocked(userService.getAllUsers).mockResolvedValue(mockUsers);
-
 		const { result } = renderHook(() => useUsers());
 
 		await waitFor(() => {
@@ -68,25 +66,9 @@ describe('useUsers', () => {
 		expect(user).toHaveProperty('location');
 	});
 
-	test('initially returns loading state', () => {
-		const { result } = renderHook(() => useUsers());
+	test('calls fetchUsers on mount', () => {
+		renderHook(() => useUsers());
 
-		expect(result.current.loading).toBe(true);
-		expect(result.current.users).toHaveLength(0);
-		expect(result.current.error).toBe(null);
-	});
-
-	test('handles error when service fails', async () => {
-		const { userService } = await import('../services/userService');
-		vi.mocked(userService.getAllUsers).mockRejectedValue(new Error('Service error'));
-
-		const { result } = renderHook(() => useUsers());
-
-		await waitFor(() => {
-			expect(result.current.loading).toBe(false);
-		});
-
-		expect(result.current.error).toBe('Failed to load users');
-		expect(result.current.users).toHaveLength(0);
+		expect(mockFetchUsers).toHaveBeenCalled();
 	});
 }); 

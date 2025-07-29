@@ -1,9 +1,14 @@
 import { render } from '@testing-library/react';
+import { UserProvider } from '../contexts/UserContext';
 
 const customRender = (ui: React.ReactElement, options = {}) =>
   render(ui, {
     // wrap provider(s) here if needed
-    wrapper: ({ children }) => children,
+    wrapper: ({ children }) => (
+      <UserProvider>
+        {children}
+      </UserProvider>
+    ),
     ...options,
   });
 

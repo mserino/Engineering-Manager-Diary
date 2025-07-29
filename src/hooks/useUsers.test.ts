@@ -13,7 +13,7 @@ const mockUsers: User[] = [
 		location: 'New York, NY',
 	},
 	{
-		id: 2,
+		id: "2",
 		name: 'Jane Smith',
 		role: 'Senior Backend Engineer',
 		birthday: '1985-05-15',

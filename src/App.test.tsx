@@ -58,4 +58,18 @@ describe('App', () => {
 		expect(screen.getByText('John Doe')).toBeInTheDocument();
 		expect(screen.getByText('Senior Frontend Engineer')).toBeInTheDocument();
 	});
+
+	test('displays add team member link on homepage', () => {
+		mockUseUsers.mockReturnValue({
+			users: [],
+			loading: false,
+			error: null,
+		});
+
+		render(<App />);
+
+		expect(screen.getByText('Team Members')).toBeInTheDocument();
+		expect(screen.getByText('Add a new team member')).toBeInTheDocument();
+		expect(screen.getByText('Add a new team member')).toHaveAttribute('href', '/add-user');
+	});
 });

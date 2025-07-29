@@ -37,24 +37,32 @@ describe('UserList', () => {
 		expect(screen.getByText('Senior Backend Engineer')).toBeInTheDocument();
 	});
 
-
 	test('renders correct number of user cards', () => {
 		render(<UserList users={mockUsers} />);
 		
-		const userCards = screen.getAllByRole('article');
+		const userCards = screen.getAllByRole('link');
 		expect(userCards).toHaveLength(2);
 	});
 
 	test('handles empty users array', () => {
 		render(<UserList users={[]} />);
 		
-		expect(screen.queryByRole('article')).not.toBeInTheDocument();
+		expect(screen.queryByRole('link')).not.toBeInTheDocument();
 	});
 
 	test('has proper accessibility attributes', () => {
 		render(<UserList users={mockUsers} />);
 		
-		const userCards = screen.getAllByRole('article');
+		const userCards = screen.getAllByRole('link');
 		expect(userCards).toHaveLength(2);
+	});
+
+	test('user cards are clickable links', () => {
+		render(<UserList users={mockUsers} />);
+		
+		const links = screen.getAllByRole('link');
+		expect(links).toHaveLength(2);
+		expect(links[0]).toHaveAttribute('href', '/user/1');
+		expect(links[1]).toHaveAttribute('href', '/user/2');
 	});
 }); 

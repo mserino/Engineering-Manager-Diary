@@ -8,10 +8,11 @@ export const UserList = ({ users }: UserListProps) => {
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
 			{users.map((user) => (
-				<div
+				<a
 					key={user.id}
-					role="article"
-					className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200"
+					href={`/user/${user.id}`}
+					aria-label={`View details for ${user.name}`}
+					className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200 block"
 				>
 					<div className="flex items-center space-x-4">
 						<div>
@@ -19,7 +20,7 @@ export const UserList = ({ users }: UserListProps) => {
 							<p className="text-gray-600">{user.role}</p>
 						</div>
 					</div>
-				</div>
+				</a>
 			))}
 		</div>
 	);

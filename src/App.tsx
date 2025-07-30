@@ -29,17 +29,19 @@ function HomePage() {
 
 	return (
 		<div className="emd-container py-12">
-			<div className="py-8">
-				<div className="mb-6 flex justify-between items-center">
-					<h1 className="text-3xl font-bold text-gray-900">Team Members</h1>
-					<a
+			<div className="flex flex-col gap-6 min-w-[600px]">
+				<div className="flex flex-col gap-4 justify-between items-center">
+          <h1 className="text-3xl font-bold text-gray-900">Team Members</h1>
+				</div>
+				<UserList users={users} />
+        <div className="flex justify-center">
+          <a
 						href="/add-user"
 						className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
 					>
 						Add a new team member
 					</a>
-				</div>
-				<UserList users={users} />
+        </div>
 			</div>
 		</div>
 	);

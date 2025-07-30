@@ -121,7 +121,10 @@ describe('useOneOnOneNotes', () => {
 			await result.current.createNote(noteData);
 		});
 
-		expect(mockOneOnOneService.createNote).toHaveBeenCalledWith(noteData);
+		expect(mockOneOnOneService.createNote).toHaveBeenCalledWith(expect.objectContaining({
+			...noteData,
+			createdAt: expect.any(String),
+		}));
 		expect(result.current.notes).toEqual([newNote]);
 	});
 

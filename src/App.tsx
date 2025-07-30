@@ -28,7 +28,7 @@ function HomePage() {
 	}
 
 	return (
-		<div className="emd-container">
+		<div className="emd-container py-12">
 			<div className="py-8">
 				<div className="mb-6 flex justify-between items-center">
 					<h1 className="text-3xl font-bold text-gray-900">Team Members</h1>

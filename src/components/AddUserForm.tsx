@@ -39,8 +39,8 @@ export const AddUserForm = () => {
 	};
 
 	return (
-		<div className="emd-container">
-			<div className="bg-white rounded-lg shadow-lg p-8">
+		<div className="emd-container items-center">
+			<div className="bg-white rounded-lg shadow-md p-6 transition-shadow duration-200 max-w-md w-full space-y-8">
 				<div className="mb-8">
 					<h1 className="text-3xl font-bold text-gray-900">Add New Team Member</h1>
 					<p className="text-gray-600 mt-2">Fill in the details below to add a new team member.</p>

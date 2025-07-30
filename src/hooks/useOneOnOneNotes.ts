@@ -22,7 +22,10 @@ export const useOneOnOneNotes = (userId: string) => {
 
 	const createNote = useCallback(async (noteData: Omit<OneOnOneNote, 'id' | 'createdAt'>) => {
 		try {
-			const newNote = await oneOnOneService.createNote(noteData);
+			const newNote = await oneOnOneService.createNote({
+				...noteData,
+				createdAt: new Date().toISOString(),
+			});
 			setNotes(prevNotes => [newNote, ...prevNotes]);
 			return newNote;
 		} catch {

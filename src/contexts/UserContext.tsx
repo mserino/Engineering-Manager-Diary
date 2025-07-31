@@ -10,7 +10,7 @@ interface UserContextType {
 	fetchUsers: () => Promise<void>;
 	updateUser: (id: string, userData: Partial<User>) => Promise<void>;
 	deleteUser: (id: string) => Promise<void>;
-	createUser: (userData: Omit<User, 'id'>) => Promise<void>;
+	createUser: (userData: Omit<User, 'id'>) => Promise<User>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -63,11 +63,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 		}
 	}, []);
 
-	const createUser = useCallback(async (userData: Omit<User, 'id'>) => {
+	const createUser = useCallback(async (userData: Omit<User, 'id'>): Promise<User> => {
 		try {
 			const newUser = await userService.createUser(userData);
-			// Add the new user to local state
 			setUsers(prevUsers => [...prevUsers, newUser]);
+			return newUser;
 		} catch {
 			throw new Error('Failed to create user');
 		}

@@ -29,8 +29,8 @@ export const AddUserForm = () => {
 		setError(null);
 
 		try {
-			await createUser(formData);
-			navigate('/');
+			const user = await createUser(formData);
+			navigate(`/user/${user.id}`);
 		} catch {
 			setError('Failed to create user. Please try again.');
 		} finally {

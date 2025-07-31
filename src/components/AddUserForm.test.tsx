@@ -52,7 +52,7 @@ describe('AddUserForm', () => {
 	});
 
 	test('submits form with user data', async () => {
-		mockCreateUser.mockResolvedValue({});
+		mockCreateUser.mockResolvedValue({ id: '1' });
 
 		render(<AddUserForm />);
 
@@ -75,7 +75,7 @@ describe('AddUserForm', () => {
 		});
 
 		await waitFor(() => {
-			expect(mockNavigate).toHaveBeenCalledWith('/');
+			expect(mockNavigate).toHaveBeenCalledWith('/user/1');
 		});
 	});
 

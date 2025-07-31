@@ -59,13 +59,13 @@ describe('OneOnOneNotesList', () => {
 		const firstNoteCardDiv = screen.getByTestId('note-card-1').parentElement;
 		expect(firstNoteCardDiv).not.toBeNull();
 		expect(firstNoteCardDiv).toHaveClass('border-blue-500');
-		expect(screen.getByText('1/15/2024')).toBeInTheDocument();
+		expect(screen.getByText('January 15, 2024')).toBeInTheDocument();
 		expect(screen.getByText('Created 1/15/2024')).toBeInTheDocument();
 		
 		const secondNoteCardDiv = screen.getByTestId('note-card-2').parentElement;
 		expect(secondNoteCardDiv).not.toBeNull();
 		expect(secondNoteCardDiv).toHaveClass('border-red-500');
-		expect(screen.getByText('1/10/2024')).toBeInTheDocument();
+		expect(screen.getByText('January 10, 2024')).toBeInTheDocument();
 		expect(screen.getByText('Created 1/10/2024')).toBeInTheDocument();
 		expect(screen.getByText('Flagged')).toBeInTheDocument();
 	});

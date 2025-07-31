@@ -53,12 +53,14 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: One
 						</span>
 						<div className="flex-1">
 							<div className="flex items-center space-x-3">
-								<span className="text-sm font-medium text-gray-900">
-									{new Date(note.date).toLocaleDateString()}
-								</span>
-								<span className="text-xs text-gray-500">
-									Created {new Date(note.createdAt).toLocaleDateString()}
-								</span>
+								<div className="flex flex-col">
+									<span className="text-sm font-medium text-gray-900">
+										{new Date(note.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+									</span>
+									<span className="text-xs text-gray-500">
+										Created {new Date(note.createdAt).toLocaleDateString()}
+									</span>
+								</div>
 								{note.flag && (
 									<span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
 										Flagged
@@ -83,6 +85,7 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: One
 				{isExpanded && (
 					<div className="border-t border-gray-100 p-4">
 						<div className="prose prose-sm max-w-none mb-4">
+							<h3 className="text-lg font-semibold text-gray-900">Talking Points</h3>
 							<div className="whitespace-pre-wrap text-gray-700">{note.talkingPoints}</div>
 						</div>
 

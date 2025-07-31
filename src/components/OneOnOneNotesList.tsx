@@ -12,7 +12,7 @@ export const OneOnOneNotesList = ({ notes, onDelete, onEdit, onUpdateFlag }: One
 
 	if (notes.length === 0) {
 		return (
-			<div className="text-center py-8 text-gray-500">
+			<div className="bg-white rounded-lg shadow-lg p-8 mb-6 text-center py-8 text-gray-500">
 				<p>No 1:1 notes yet. Add your first note to get started!</p>
 			</div>
 		);

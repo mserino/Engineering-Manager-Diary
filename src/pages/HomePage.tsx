@@ -5,40 +5,40 @@ import { Spinner } from '../components/Spinner';
 export default function HomePage() {
     const { users, loading, error } = useUsers();
 
-    if (loading) {
-        return (
-            <div className="emd-container">
-                <div className="flex justify-center items-center py-12">
-                    <Spinner size="lg" />
-                </div>
-            </div>
-        );
-    }
+	if (loading) {
+		return (
+			<div className="emd-container">
+				<div className="flex justify-center items-center py-12">
+					<Spinner size="lg" />
+				</div>
+			</div>
+		);
+	}
 
-    if (error) {
-        return (
-            <div className="emd-container">
-                <div className="text-xl text-red-600">{error}</div>
-            </div>
-        );
-    }
+	if (error) {
+		return (
+			<div className="emd-container">
+				<div className="text-xl text-red-600">{error}</div>
+			</div>
+		);
+	}
 
     return (
-        <div className="emd-container py-12">
-            <div className="flex flex-col gap-6 min-w-[600px]">
-                <div className="flex flex-col gap-4 justify-between items-center">
-                    <h1 className="text-3xl font-bold text-gray-900">Team Members</h1>
-                </div>
-                <UserList users={users} />
-                <div className="flex justify-center">
-                    <a
-                        href="/add-user"
-                        className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
-                    >
-                        Add a new team member
-                    </a>
-                </div>
-            </div>
-        </div>
+		<div className="emd-container py-12">
+			<div className="flex flex-col gap-6 min-w-[600px]">
+				<div className="flex flex-col gap-4 justify-between items-center">
+					<h1 className="text-3xl font-bold text-gray-900">Team Members</h1>
+				</div>
+				<UserList users={users} />
+				<div className="flex justify-center">
+					<a
+						href="/add-user"
+						className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
+					>
+						Add a new team member
+					</a>
+				</div>
+			</div>
+		</div>
     );
 } 

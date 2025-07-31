@@ -27,7 +27,7 @@ describe('OneOnOneNoteSingle', () => {
 	test('renders note with basic information', () => {
 		render(<OneOnOneNoteSingle note={mockNote} />);
 
-		expect(screen.getByText('1/15/2024')).toBeInTheDocument();
+		expect(screen.getByText('January 15, 2024')).toBeInTheDocument();
 		expect(screen.getByText('Created 1/15/2024')).toBeInTheDocument();
 		expect(screen.getByText('Flagged')).toBeInTheDocument();
 		expect(screen.getByLabelText('Happy mood')).toBeInTheDocument();

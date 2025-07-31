@@ -1,5 +1,5 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '../test/test-utils';
+import { render, screen, fireEvent, waitFor, cleanup } from '../test/test-utils';
 import { UserDetail } from './UserDetail';
 import type { User } from '../types/User';
 import type { OneOnOneNote } from '../types/OneOnOneNote';
@@ -364,5 +364,23 @@ describe('UserDetail', () => {
 		
 		expect(screen.getByText('Flagged')).toBeInTheDocument();
 		expect(resolveButton).toBeInTheDocument();
+	});
+
+	test('if today is this person\'s birthday, I see a birthday message', () => {
+		const mockToday = new Date('1990-01-01');
+		vi.setSystemTime(mockToday);
+
+		render(<UserDetail user={mockUser} />);
+		expect(screen.getByText('Happy Birthday!')).toBeInTheDocument();
+		
+		cleanup();
+
+		const differentDay = new Date('1990-01-02');
+		vi.setSystemTime(differentDay);
+
+		render(<UserDetail user={mockUser} />);
+		expect(screen.queryByText('Happy Birthday!')).not.toBeInTheDocument();
+
+		vi.useRealTimers();
 	});
 }); 

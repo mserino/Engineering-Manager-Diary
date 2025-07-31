@@ -105,6 +105,10 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 		}
 	};
 
+	const today = new Date();
+	const isBirthday = user.birthday && new Date(user.birthday).getDate() === today.getDate() && new Date(user.birthday).getMonth() === today.getMonth();
+	const isWorkAnniversary = user.hiringDate && new Date(user.hiringDate).getDate() === today.getDate() && new Date(user.hiringDate).getMonth() === today.getMonth();
+
 	if (isEditing) {
 		return <EditUserForm user={user} onCancel={() => setIsEditing(false)} />;
 	}
@@ -114,16 +118,30 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 			<div className="max-w-4xl mx-auto p-6">
 				<div className="bg-white rounded-lg shadow-lg p-8 mb-6">
 					<div className="flex items-center justify-between mb-8">
-						<div className="flex items-center space-x-6">
-							<div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center">
-								<span className="text-white font-bold text-2xl">
-									{user.name.charAt(0)}
-								</span>
+						<div className="flex flex-col gap-4 items-start">
+							<div className="flex items-center space-x-6">
+								<div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center">
+									<span className="text-white font-bold text-2xl">
+										{user.name.charAt(0)}
+									</span>
+								</div>
+								<div className="flex flex-col gap-2">
+									<h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
+									<p className="text-xl text-gray-600">{user.role}</p>
+								</div>
 							</div>
-							<div>
-								<h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
-								<p className="text-xl text-gray-600">{user.role}</p>
-							</div>
+							{isBirthday && (
+								<div className="flex items-center gap-2 rounded-lg px-4 py-2">
+									<span className="text-2xl" role="img" aria-label="tada">🎉</span>
+									<span className="text-pink-600 font-semibold">Happy Birthday!</span>
+								</div>
+							)}
+							{isWorkAnniversary && (
+								<div className="flex items-center gap-2 rounded-lg px-4 py-2">
+									<span className="text-2xl" role="img" aria-label="tada">🎉</span>
+									<span className="text-teal-600 font-semibold">Happy Work Anniversary!</span>
+								</div>
+							)}
 						</div>
 						<div className="flex gap-3">
 							<button
@@ -176,34 +194,32 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 				</div>
 
 				{/* 1:1 Notes Section */}
-				<div className="bg-white rounded-lg shadow-lg p-8">
-					<div className="flex items-center justify-between mb-6">
-						<h2 className="text-2xl font-bold text-gray-900">1:1 Notes</h2>
-						<button
-							onClick={() => setShowNoteModal(true)}
-							className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 cursor-pointer"
-						>
-							Add Note
-						</button>
-					</div>
-
-					{notesError ? (
-						<div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-							<p className="text-red-600">{notesError}</p>
-						</div>
-					) : notesLoading ? (
-						<div className="flex justify-center items-center py-12">
-							<Spinner size="lg" />
-						</div>
-					) : (
-						<OneOnOneNotesList 
-							notes={notes} 
-							onDelete={handleDeleteNote}
-							onEdit={handleEditNote}
-							onUpdateFlag={handleUpdateNoteFlag}
-						/>
-					)}
+				<div className="flex items-center justify-between mb-6">
+					<h2 className="text-2xl font-bold text-gray-900">1:1 Notes <span className="text-sm text-gray-500">({notes.length} {notes.length === 1 ? 'note' : 'notes'})</span></h2>
+					<button
+						onClick={() => setShowNoteModal(true)}
+						className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
+					>
+						Add Note
+					</button>
 				</div>
+
+				{notesError ? (
+					<div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+						<p className="text-red-600">{notesError}</p>
+					</div>
+				) : notesLoading ? (
+					<div className="flex justify-center items-center py-12">
+						<Spinner size="lg" />
+					</div>
+				) : (
+					<OneOnOneNotesList 
+						notes={notes} 
+						onDelete={handleDeleteNote}
+						onEdit={handleEditNote}
+						onUpdateFlag={handleUpdateNoteFlag}
+					/>
+				)}
 			</div>
 
 			{/* 1:1 Note Modal */}

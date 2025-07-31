@@ -115,4 +115,25 @@ describe('UserList', () => {
 
 		expect(screen.getByText(MOODS.HAPPY)).toBeInTheDocument();
 	});
+
+	test('shows birthday message if today is the user\'s birthday', () => {
+		const mockToday = new Date('1990-01-01');
+		vi.setSystemTime(mockToday);
+
+		render(<UserList users={mockUsers} />);
+
+		vi.mock('../hooks/useUserNotesSummary', () => ({
+			useUserNotesSummary: () => ({
+				'1': { totalNotes: 2, flaggedNotes: 1, lastNoteMood: mockOneOnOneNotes[0]?.mood },
+				'2': { totalNotes: 1, flaggedNotes: 0, lastNoteMood: mockOneOnOneNotes[2]?.mood },
+			}),
+		}));
+
+		expect(screen.getByText('Today is someone\'s birthday!')).toBeInTheDocument();
+		const birthdayCards = screen.getAllByTestId('birthday-card');
+		expect(birthdayCards).toHaveLength(1);
+		expect(birthdayCards[0]).toHaveTextContent('John Doe');
+
+		vi.useRealTimers();
+	});
 }); 

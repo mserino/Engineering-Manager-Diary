@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
+import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '../test/test-utils';
 import { OneOnOneNoteForm } from './OneOnOneNoteForm';
 import type { OneOnOneNote } from '../types/OneOnOneNote';
@@ -24,10 +24,6 @@ describe('OneOnOneNoteForm', () => {
 		vi.clearAllMocks();
 		// Mock current date for consistent testing
 		vi.setSystemTime(new Date('2024-01-20'));
-	});
-
-	afterEach(() => {
-		vi.useRealTimers();
 	});
 
 	test('renders empty form in create mode', () => {

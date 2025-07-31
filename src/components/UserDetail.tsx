@@ -93,6 +93,14 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 		setDeletingNoteId(undefined);
 	};
 
+	const handleUpdateNoteFlag = async (noteId: string, flag: boolean) => {
+		try {
+			await updateNote(noteId, { flag });
+		} catch {
+			// Handle error silently or show a toast
+		}
+	};
+
 	if (isEditing) {
 		return <EditUserForm user={user} onCancel={() => setIsEditing(false)} />;
 	}
@@ -188,6 +196,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 							notes={notes} 
 							onDelete={handleDeleteNote}
 							onEdit={handleEditNote}
+							onUpdateFlag={handleUpdateNoteFlag}
 						/>
 					)}
 				</div>

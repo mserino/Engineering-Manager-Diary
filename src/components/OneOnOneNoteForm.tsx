@@ -23,11 +23,13 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 		talkingPoints: string;
 		mood: MoodType;
 		flag: boolean;
+		flagDescription?: string;
 	}>({
 		date: note?.date || today,
 		talkingPoints: note?.talkingPoints || '',
 		mood: note?.mood || MOODS.HAPPY,
 		flag: note?.flag || false,
+		flagDescription: note?.flagDescription || '',
 	});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -40,6 +42,7 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 				talkingPoints: note.talkingPoints,
 				mood: note.mood,
 				flag: note.flag,
+				flagDescription: note.flagDescription || '',
 			});
 		}
 	}, [note]);
@@ -71,6 +74,7 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 				talkingPoints: formData.talkingPoints,
 				mood: formData.mood,
 				flag: formData.flag,
+				flagDescription: formData.flagDescription,
 			});
 			onCancel();
 		} catch {
@@ -112,7 +116,7 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 
 				<div>
 					<label htmlFor="talkingPoints" className="block text-sm font-medium text-gray-700 mb-2">
-						Talking Points
+						Talking Points <span className="text-red-500">*</span>
 					</label>
 					<textarea
 						id="talkingPoints"
@@ -170,6 +174,21 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 							Flag for follow-up
 						</span>
 					</label>
+
+					{formData.flag && (
+						<>
+							<label htmlFor="flagDescription" className="block text-sm font-medium text-gray-700 mb-2 mt-2">
+								Flag Description <span className="text-red-500">*</span>
+							</label>
+							<textarea
+								id="flagDescription"
+								name="flagDescription"
+								value={formData.flagDescription}
+								onChange={handleChange}
+								className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+							/>
+						</>
+					)}
 				</div>
 
 				<div className="flex gap-4 pt-4">

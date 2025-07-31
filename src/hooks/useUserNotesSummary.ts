@@ -7,6 +7,7 @@ interface UserNotesSummary {
 	[userId: string]: {
 		totalNotes: number;
 		flaggedNotes: number;
+		lastNoteMood: string | null;
 	};
 }
 
@@ -33,11 +34,18 @@ export const useUserNotesSummary = (userIds: string[]) => {
 						acc[note.userId] = {
 							totalNotes: 0,
 							flaggedNotes: 0,
+							lastNoteMood: null,
 						};
 					}
 					acc[note.userId]!.totalNotes++;
 					if (note.flag) {
 						acc[note.userId]!.flaggedNotes++;
+					}
+					if (
+						!acc[note.userId]!.lastNoteMood ||
+						new Date(note.date) < new Date((acc[note.userId] as unknown as { date: string })?.date ?? 0)
+					) {
+						acc[note.userId]!.lastNoteMood = note.mood;
 					}
 					return acc;
 				}, {} as UserNotesSummary);
@@ -48,6 +56,7 @@ export const useUserNotesSummary = (userIds: string[]) => {
 						newSummary[userId] = {
 							totalNotes: 0,
 							flaggedNotes: 0,
+							lastNoteMood: null,
 						};
 					}
 				});

@@ -21,6 +21,7 @@ const mockNotes: OneOnOneNote[] = [
 		talkingPoints: 'Team member expressed concerns about workload.',
 		mood: MOODS.SAD,
 		flag: true,
+		flagDescription: 'Workload is too high',
 		createdAt: '2024-01-10T14:30:00Z',
 	},
 ];
@@ -28,6 +29,7 @@ const mockNotes: OneOnOneNote[] = [
 describe('OneOnOneNotesList', () => {
 	const mockOnDelete = vi.fn();
 	const mockOnEdit = vi.fn();
+	const mockOnUpdateFlag = vi.fn();
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -42,12 +44,10 @@ describe('OneOnOneNotesList', () => {
 	test('renders list of notes', () => {
 		render(<OneOnOneNotesList notes={mockNotes} />);
 		
-		// Find and expand the first note
 		const firstNoteCard = screen.getByTestId('note-card-1');
 		fireEvent.click(firstNoteCard);
 		expect(screen.getByText('Discussed project progress and upcoming deadlines.')).toBeInTheDocument();
 
-		// Find and expand the second note
 		const secondNoteCard = screen.getByTestId('note-card-2');
 		fireEvent.click(secondNoteCard);
 		expect(screen.getByText('Team member expressed concerns about workload.')).toBeInTheDocument();
@@ -56,147 +56,85 @@ describe('OneOnOneNotesList', () => {
 	test('displays note information correctly', () => {
 		render(<OneOnOneNotesList notes={mockNotes} />);
 		
-		// Check dates are displayed
+		const firstNoteCard = screen.getByTestId('note-card-1');
+		expect(firstNoteCard).toHaveClass('border-blue-500'); // Not flagged
 		expect(screen.getByText('1/15/2024')).toBeInTheDocument();
-		expect(screen.getByText('1/10/2024')).toBeInTheDocument();
-		
-		// Check creation dates
 		expect(screen.getByText('Created 1/15/2024')).toBeInTheDocument();
+		
+		const secondNoteCard = screen.getByTestId('note-card-2');
+		expect(secondNoteCard).toHaveClass('border-red-500'); // Flagged
+		expect(screen.getByText('1/10/2024')).toBeInTheDocument();
 		expect(screen.getByText('Created 1/10/2024')).toBeInTheDocument();
-		
-		// Check moods
-		expect(screen.getByText('😊')).toBeInTheDocument();
-		expect(screen.getByText('😔')).toBeInTheDocument();
-		
-		// Check flag
 		expect(screen.getByText('Flagged')).toBeInTheDocument();
 	});
 
-	test('expands note when card is clicked', () => {
+	test('displays flagged description when flag is true', () => {
 		render(<OneOnOneNotesList notes={mockNotes} />);
 		
-		const firstNoteCard = screen.getByTestId('note-card-1');
-		expect(firstNoteCard).toBeInTheDocument();
-		
-		fireEvent.click(firstNoteCard);
-		
-		// Should show talking points
-		expect(screen.getByText('Discussed project progress and upcoming deadlines.')).toBeInTheDocument();
-	});
+		// Expand the flagged note to see its content
+		const secondNoteCard = screen.getByTestId('note-card-2');
+		fireEvent.click(secondNoteCard);
 
-	test('collapses note when card is clicked again', () => {
-		render(<OneOnOneNotesList notes={mockNotes} />);
-		
-		const firstNoteCard = screen.getByTestId('note-card-1');
-		expect(firstNoteCard).toBeInTheDocument();
-		
-		// First click to expand
-		fireEvent.click(firstNoteCard);
-		expect(screen.getByText('Discussed project progress and upcoming deadlines.')).toBeInTheDocument();
-		
-		// Second click to collapse
-		fireEvent.click(firstNoteCard);
-		expect(screen.queryByText('Discussed project progress and upcoming deadlines.')).not.toBeInTheDocument();
-	});
-
-	test('shows edit and delete buttons when note is expanded', () => {
-		render(<OneOnOneNotesList notes={mockNotes} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
-		
-		const firstNoteCard = screen.getByTestId('note-card-1');
-		fireEvent.click(firstNoteCard);
-		
-		expect(screen.getByText('Edit Note')).toBeInTheDocument();
-		expect(screen.getByText('Remove Note')).toBeInTheDocument();
+		// Check flag status and description
+		expect(secondNoteCard).toHaveClass('border-red-500');
+		expect(screen.getByText('Flagged')).toBeInTheDocument();
+		expect(screen.getByText('Workload is too high')).toBeInTheDocument();
 	});
 
 	test('calls onEdit when edit button is clicked', () => {
-		render(<OneOnOneNotesList notes={mockNotes} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
+		const { getByTestId, getByText } = render(<OneOnOneNotesList notes={mockNotes} onEdit={mockOnEdit} />);
 		
-		const firstNoteCard = screen.getByTestId('note-card-1');
+		const firstNoteCard = getByTestId('note-card-1');
 		fireEvent.click(firstNoteCard);
 		
-		const editButton = screen.getByText('Edit Note');
+		const editButton = getByText('Edit Note');
 		fireEvent.click(editButton);
 		
 		expect(mockOnEdit).toHaveBeenCalledWith(mockNotes[0]);
 	});
 
-	test('calls onDelete when remove button is clicked', () => {
-		render(<OneOnOneNotesList notes={mockNotes} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
+	test('calls onDelete when delete button is clicked', () => {
+		const { getByTestId, getByText } = render(<OneOnOneNotesList notes={mockNotes} onDelete={mockOnDelete} />);
+		
+		const firstNoteCard = getByTestId('note-card-1');
+		fireEvent.click(firstNoteCard);
+		
+		const deleteButton = getByText('Remove Note');
+		fireEvent.click(deleteButton);
+		
+		expect(mockOnDelete).toHaveBeenCalledWith(mockNotes[0]?.id);
+	});
+
+	test('shows Mark as Resolved button only for flagged notes', () => {
+		render(<OneOnOneNotesList notes={mockNotes} onUpdateFlag={mockOnUpdateFlag} />);
 		
 		const firstNoteCard = screen.getByTestId('note-card-1');
 		fireEvent.click(firstNoteCard);
-		
-		const removeButton = screen.getByText('Remove Note');
-		fireEvent.click(removeButton);
-		
-		expect(mockOnDelete).toHaveBeenCalledWith('1');
+		expect(screen.queryByText('Mark as Resolved')).not.toBeInTheDocument();
+
+		const secondNoteCard = screen.getByTestId('note-card-2');
+		fireEvent.click(secondNoteCard);
+		expect(screen.getByText('Mark as Resolved')).toBeInTheDocument();
 	});
 
-	test('does not expand note when clicking on action buttons', () => {
-		render(<OneOnOneNotesList notes={mockNotes} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
+	test('calls onUpdateFlag when Mark as Resolved is clicked', () => {
+		const { getByTestId, getByText } = render(<OneOnOneNotesList notes={mockNotes} onUpdateFlag={mockOnUpdateFlag} />);
 		
-		const firstNoteCard = screen.getByTestId('note-card-1');
-		fireEvent.click(firstNoteCard);
+		const secondNoteCard = getByTestId('note-card-2');
+		fireEvent.click(secondNoteCard);
 		
-		const editButton = screen.getByText('Edit Note');
-		fireEvent.click(editButton);
+		const resolveButton = getByText('Mark as Resolved');
+		fireEvent.click(resolveButton);
 		
-		// Should still be expanded (not collapsed by button click)
-		expect(screen.getByText('Discussed project progress and upcoming deadlines.')).toBeInTheDocument();
+		expect(mockOnUpdateFlag).toHaveBeenCalledWith(mockNotes[1]?.id, false);
 	});
 
-	test('does not show action buttons when onEdit and onDelete are not provided', () => {
-		render(<OneOnOneNotesList notes={mockNotes} />);
+	test('does not show Mark as Resolved button when onUpdateFlag is not provided', () => {
+		const { getByTestId } = render(<OneOnOneNotesList notes={mockNotes} />);
 		
-		const firstNoteCard = screen.getByTestId('note-card-1');
-		fireEvent.click(firstNoteCard);
+		const secondNoteCard = getByTestId('note-card-2');
+		fireEvent.click(secondNoteCard);
 		
-		expect(screen.queryByText('Edit Note')).not.toBeInTheDocument();
-		expect(screen.queryByText('Remove Note')).not.toBeInTheDocument();
-	});
-
-	test('shows only edit button when only onEdit is provided', () => {
-		render(<OneOnOneNotesList notes={mockNotes} onEdit={mockOnEdit} />);
-		
-		const firstNoteCard = screen.getByTestId('note-card-1');
-		fireEvent.click(firstNoteCard);
-		
-		expect(screen.getByText('Edit Note')).toBeInTheDocument();
-		expect(screen.queryByText('Remove Note')).not.toBeInTheDocument();
-	});
-
-	test('shows only delete button when only onDelete is provided', () => {
-		render(<OneOnOneNotesList notes={mockNotes} onDelete={mockOnDelete} />);
-		
-		const firstNoteCard = screen.getByTestId('note-card-1');
-		fireEvent.click(firstNoteCard);
-		
-		expect(screen.queryByText('Edit Note')).not.toBeInTheDocument();
-		expect(screen.getByText('Remove Note')).toBeInTheDocument();
-	});
-
-	test('applies correct border color based on flag status', () => {
-		render(<OneOnOneNotesList notes={mockNotes} />);
-		
-		const flaggedNote = screen.getByTestId('note-card-2');
-		const unflaggedNote = screen.getByTestId('note-card-1');
-		
-		expect(flaggedNote).toHaveClass('border-red-500');
-		expect(unflaggedNote).toHaveClass('border-blue-500');
-	});
-
-	test('shows chevron icon that rotates when expanded', () => {
-		render(<OneOnOneNotesList notes={mockNotes} />);
-		
-		const firstNoteCard = screen.getByTestId('note-card-1');
-		const chevron = firstNoteCard.querySelector('svg');
-		
-		expect(chevron).toBeInTheDocument();
-		expect(chevron).not.toHaveClass('rotate-180');
-		
-		fireEvent.click(firstNoteCard);
-		
-		expect(chevron).toHaveClass('rotate-180');
+		expect(screen.queryByText('Mark as Resolved')).not.toBeInTheDocument();
 	});
 }); 

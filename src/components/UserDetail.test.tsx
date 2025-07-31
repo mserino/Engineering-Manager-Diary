@@ -31,6 +31,7 @@ const mockNotes: OneOnOneNote[] = [
 		talkingPoints: 'Team member expressed concerns about workload.',
 		mood: MOODS.SAD,
 		flag: true,
+		flagDescription: 'Workload is too high',
 		createdAt: '2024-01-10T14:30:00Z',
 	},
 ];
@@ -100,13 +101,11 @@ describe('UserDetail', () => {
 	test('displays notes when available', () => {
 		render(<UserDetail user={mockUser} />);
 
-		// Find and expand the first note
 		const firstNoteCard = screen.getByTestId('note-card-1');
 		fireEvent.click(firstNoteCard);
 
 		expect(screen.getByText('Discussed project progress and upcoming deadlines.')).toBeInTheDocument();
 
-		// Find and expand the second note
 		const secondNoteCard = screen.getByTestId('note-card-2');
 		fireEvent.click(secondNoteCard);
 
@@ -126,14 +125,11 @@ describe('UserDetail', () => {
 	test('opens note modal for editing when edit note is clicked', async () => {
 		render(<UserDetail user={mockUser} />);
 
-		// Find the first note card
 		const firstNoteCard = screen.getByTestId('note-card-1');
 		expect(firstNoteCard).toBeInTheDocument();
 		
-		// Click to expand the note
 		fireEvent.click(firstNoteCard);
 
-		// Click edit button
 		const editButton = screen.getByText('Edit Note');
 		fireEvent.click(editButton);
 
@@ -143,14 +139,11 @@ describe('UserDetail', () => {
 	test('opens delete confirmation modal when remove note is clicked', async () => {
 		render(<UserDetail user={mockUser} />);
 
-		// Find the first note card
 		const firstNoteCard = screen.getByTestId('note-card-1');
 		expect(firstNoteCard).toBeInTheDocument();
 		
-		// Click to expand the note
 		fireEvent.click(firstNoteCard);
 
-		// Click remove button
 		const removeButton = screen.getByText('Remove Note');
 		fireEvent.click(removeButton);
 
@@ -161,11 +154,9 @@ describe('UserDetail', () => {
 	test('closes note modal when cancel is clicked', () => {
 		render(<UserDetail user={mockUser} />);
 
-		// Open add note modal
 		const addNoteButton = screen.getByText('Add Note');
 		fireEvent.click(addNoteButton);
 
-		// Click cancel
 		const cancelButton = screen.getByText('Cancel');
 		fireEvent.click(cancelButton);
 
@@ -203,18 +194,14 @@ describe('UserDetail', () => {
 
 		render(<UserDetail user={mockUser} />);
 
-		// Find the first note card
 		const firstNoteCard = screen.getByTestId('note-card-1');
 		expect(firstNoteCard).toBeInTheDocument();
 		
-		// Click to expand the note
 		fireEvent.click(firstNoteCard);
 
-		// Click remove button
 		const removeButton = screen.getByText('Remove Note');
 		fireEvent.click(removeButton);
 
-		// Confirm deletion
 		const confirmButton = screen.getByText('Confirm');
 		fireEvent.click(confirmButton);
 
@@ -232,18 +219,15 @@ describe('UserDetail', () => {
 
 		render(<UserDetail user={mockUser} />);
 
-		// Open add note modal
 		const addNoteButton = screen.getByText('Add Note');
 		fireEvent.click(addNoteButton);
 
-		// Fill form
 		const dateInput = screen.getByLabelText('Date');
-		const talkingPointsInput = screen.getByLabelText('Talking Points');
+		const talkingPointsInput = screen.getByLabelText('Talking Points *');
 
 		fireEvent.change(dateInput, { target: { value: '2024-01-20' } });
 		fireEvent.change(talkingPointsInput, { target: { value: 'New note content' } });
 
-		// Submit form
 		const submitButton = screen.getByText('Save Note');
 		fireEvent.click(submitButton);
 
@@ -254,6 +238,7 @@ describe('UserDetail', () => {
 				talkingPoints: 'New note content',
 				mood: MOODS.HAPPY,
 				flag: false,
+				flagDescription: '',
 			});
 		});
 	});
@@ -267,18 +252,14 @@ describe('UserDetail', () => {
 
 		render(<UserDetail user={mockUser} />);
 
-		// Find the first note card
 		const firstNoteCard = screen.getByTestId('note-card-1');
 		expect(firstNoteCard).toBeInTheDocument();
 		
-		// Click to expand the note
 		fireEvent.click(firstNoteCard);
 
-		// Click edit button
 		const editButton = screen.getByText('Edit Note');
 		fireEvent.click(editButton);
 
-		// Submit form
 		const submitButton = screen.getByText('Update Note');
 		fireEvent.click(submitButton);
 
@@ -289,6 +270,7 @@ describe('UserDetail', () => {
 				talkingPoints: 'Discussed project progress and upcoming deadlines.',
 				mood: MOODS.HAPPY,
 				flag: false,
+				flagDescription: '',
 			});
 		});
 	});
@@ -302,18 +284,14 @@ describe('UserDetail', () => {
 
 		render(<UserDetail user={mockUser} />);
 
-		// Find the first note card
 		const firstNoteCard = screen.getByTestId('note-card-1');
 		expect(firstNoteCard).toBeInTheDocument();
 		
-		// Click to expand the note
 		fireEvent.click(firstNoteCard);
 
-		// Click remove button
 		const removeButton = screen.getByText('Remove Note');
 		fireEvent.click(removeButton);
 
-		// Confirm deletion
 		const confirmButton = screen.getByText('Confirm');
 		fireEvent.click(confirmButton);
 
@@ -327,21 +305,63 @@ describe('UserDetail', () => {
 
 		render(<UserDetail user={mockUser} />);
 
-		// Find the first note card
 		const firstNoteCard = screen.getByTestId('note-card-1');
 		expect(firstNoteCard).toBeInTheDocument();
 		
-		// Click to expand the note
 		fireEvent.click(firstNoteCard);
 
-		// Click remove button
 		const removeButton = screen.getByText('Remove Note');
 		fireEvent.click(removeButton);
 
-		// Click cancel
 		const cancelButton = screen.getByText('Cancel');
 		fireEvent.click(cancelButton);
 
 		expect(screen.queryByText('Delete Note')).not.toBeInTheDocument();
+	});
+
+	test('calls updateNote when resolving a flagged note', async () => {
+		const updateNote = vi.fn().mockResolvedValue(undefined);
+		mockUseOneOnOneNotes.mockReturnValue({
+			...baseMockState,
+			updateNote,
+		});
+
+		render(<UserDetail user={mockUser} />);
+
+		// Find and expand the flagged note
+		const flaggedNoteCard = screen.getByTestId('note-card-2');
+		fireEvent.click(flaggedNoteCard);
+
+		// Click Mark as Resolved
+		const resolveButton = screen.getByText('Mark as Resolved');
+		fireEvent.click(resolveButton);
+
+		await waitFor(() => {
+			expect(updateNote).toHaveBeenCalledWith('2', { flag: false });
+		});
+	});
+
+	test('keeps flagged note visible after failed resolve attempt', async () => {
+		const updateNote = vi.fn().mockRejectedValue(new Error('Failed to update note'));
+		mockUseOneOnOneNotes.mockReturnValue({
+			...baseMockState,
+			updateNote,
+		});
+
+		render(<UserDetail user={mockUser} />);
+
+		// Find and expand the flagged note
+		const flaggedNoteCard = screen.getByTestId('note-card-2');
+		fireEvent.click(flaggedNoteCard);
+
+		// Click Mark as Resolved
+		const resolveButton = screen.getByText('Mark as Resolved');
+		fireEvent.click(resolveButton);
+
+		await waitFor(() => {
+			expect(updateNote).toHaveBeenCalledWith('2', { flag: false });
+			expect(screen.getByText('Flagged')).toBeInTheDocument();
+			expect(resolveButton).toBeInTheDocument();
+		});
 	});
 }); 

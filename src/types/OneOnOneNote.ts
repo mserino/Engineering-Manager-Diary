@@ -7,5 +7,6 @@ export interface OneOnOneNote {
 	talkingPoints: string;
 	mood: MoodType;
 	flag: boolean;
+	flagDescription?: string;
 	createdAt: string;
 } 

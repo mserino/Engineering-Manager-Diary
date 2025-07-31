@@ -6,9 +6,10 @@ interface OneOnOneNotesListProps {
 	notes: OneOnOneNote[];
 	onDelete?: (noteId: string) => Promise<void>;
 	onEdit?: (note: OneOnOneNote) => void;
+	onUpdateFlag?: (noteId: string, flag: boolean) => Promise<void>;
 }
 
-export const OneOnOneNotesList = ({ notes, onDelete, onEdit }: OneOnOneNotesListProps) => {
+export const OneOnOneNotesList = ({ notes, onDelete, onEdit, onUpdateFlag }: OneOnOneNotesListProps) => {
 	const [expandedNotes, setExpandedNotes] = useState<Set<string>>(new Set());
 
 	const toggleNote = (noteId: string) => {
@@ -91,8 +92,36 @@ export const OneOnOneNotesList = ({ notes, onDelete, onEdit }: OneOnOneNotesList
 								<div className="prose prose-sm max-w-none mb-4">
 									<div className="whitespace-pre-wrap text-gray-700">{note.talkingPoints}</div>
 								</div>
+
+								{note.flagDescription && note.flag && (
+									<div className="mt-4 bg-red-50 rounded-lg p-4 flex items-center justify-between gap-4">
+										<div className="flex items-center gap-2">
+											<svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+											</svg>
+											<div>
+												<span className="font-medium text-red-800">Flag Reason:</span>
+												<p className="text-red-700">{note.flagDescription}</p>
+											</div>
+										</div>
+										{onUpdateFlag && note.flag && (
+											<button
+												onClick={(e) => {
+													e.stopPropagation();
+													onUpdateFlag(note.id, false);
+												}}
+												className="flex items-center gap-1 px-3 py-1.5 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200 cursor-pointer shadow-sm"
+											>
+												<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+												</svg>
+												Mark as Resolved
+											</button>
+										)}
+									</div>
+								)}
 								
-								{(onEdit || onDelete) && (
+								{(onEdit || onDelete || (onUpdateFlag && note.flag)) && (
 									<div className="flex gap-2 pt-3 border-t border-gray-100">
 										{onEdit && (
 											<button

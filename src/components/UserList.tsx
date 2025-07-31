@@ -11,7 +11,7 @@ export const UserList = ({ users }: UserListProps) => {
 	return (
 	<div className="flex flex-col gap-6">
 		{users.map((user) => {
-			const userSummary = summary[user.id] || { totalNotes: 0, flaggedNotes: 0 };
+			const userSummary = summary[user.id] || { totalNotes: 0, flaggedNotes: 0, lastNoteMood: null };
 			return (
 				<a
 					key={user.id}
@@ -21,7 +21,14 @@ export const UserList = ({ users }: UserListProps) => {
 				>
 					<div className="flex justify-between items-center space-x-4">
 						<div>
-							<h3 className="text-xl font-semibold text-gray-900">{user.name}</h3>
+							<h3 className="text-xl font-semibold text-gray-900">
+								{user.name}
+								{userSummary.lastNoteMood && (
+									<span className="inline-flex items-center px-2 py-0.5 rounded-full text-lg font-large">
+										{userSummary.lastNoteMood}
+									</span>
+								)}
+							</h3>
 							<p className="text-gray-600">{user.role}</p>
 						</div>
 						{userSummary.totalNotes > 0 && (

@@ -328,16 +328,14 @@ describe('UserDetail', () => {
 
 		render(<UserDetail user={mockUser} />);
 
-		// Find and expand the flagged note
 		const flaggedNoteCard = screen.getByTestId('note-card-2');
 		fireEvent.click(flaggedNoteCard);
 
-		// Click Mark as Resolved
 		const resolveButton = screen.getByText('Mark as Resolved');
 		fireEvent.click(resolveButton);
 
 		await waitFor(() => {
-			expect(updateNote).toHaveBeenCalledWith('2', { flag: false });
+			expect(updateNote).toHaveBeenCalledWith('2', { flag: false, flagDescription: '' });
 		});
 	});
 
@@ -350,16 +348,14 @@ describe('UserDetail', () => {
 
 		render(<UserDetail user={mockUser} />);
 
-		// Find and expand the flagged note
 		const flaggedNoteCard = screen.getByTestId('note-card-2');
 		fireEvent.click(flaggedNoteCard);
 
-		// Click Mark as Resolved
 		const resolveButton = screen.getByText('Mark as Resolved');
 		fireEvent.click(resolveButton);
 
 		await waitFor(() => {
-			expect(updateNote).toHaveBeenCalledWith('2', { flag: false });
+			expect(updateNote).toHaveBeenCalledWith('2', { flag: false, flagDescription: '' });
 			expect(screen.getByText('Flagged')).toBeInTheDocument();
 			expect(resolveButton).toBeInTheDocument();
 		});

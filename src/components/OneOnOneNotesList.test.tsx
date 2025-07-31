@@ -126,7 +126,7 @@ describe('OneOnOneNotesList', () => {
 		const resolveButton = getByText('Mark as Resolved');
 		fireEvent.click(resolveButton);
 		
-		expect(mockOnUpdateFlag).toHaveBeenCalledWith(mockNotes[1]?.id, false);
+		expect(mockOnUpdateFlag).toHaveBeenCalledWith(mockNotes[1]?.id, false, '');
 	});
 
 	test('does not show Mark as Resolved button when onUpdateFlag is not provided', () => {

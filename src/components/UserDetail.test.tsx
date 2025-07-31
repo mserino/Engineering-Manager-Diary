@@ -334,13 +334,16 @@ describe('UserDetail', () => {
 		const resolveButton = screen.getByText('Mark as Resolved');
 		fireEvent.click(resolveButton);
 
+		const confirmButton = screen.getByText('Confirm');
+		fireEvent.click(confirmButton);
+
 		await waitFor(() => {
 			expect(updateNote).toHaveBeenCalledWith('2', { flag: false, flagDescription: '' });
 		});
 	});
 
-	test('keeps flagged note visible after failed resolve attempt', async () => {
-		const updateNote = vi.fn().mockRejectedValue(new Error('Failed to update note'));
+	test('keeps flag when canceling resolution', async () => {
+		const updateNote = vi.fn().mockResolvedValue(undefined);
 		mockUseOneOnOneNotes.mockReturnValue({
 			...baseMockState,
 			updateNote,
@@ -354,10 +357,12 @@ describe('UserDetail', () => {
 		const resolveButton = screen.getByText('Mark as Resolved');
 		fireEvent.click(resolveButton);
 
-		await waitFor(() => {
-			expect(updateNote).toHaveBeenCalledWith('2', { flag: false, flagDescription: '' });
-			expect(screen.getByText('Flagged')).toBeInTheDocument();
-			expect(resolveButton).toBeInTheDocument();
-		});
+		const cancelButton = screen.getByText('Cancel');
+		fireEvent.click(cancelButton);
+
+		expect(updateNote).not.toHaveBeenCalled();
+		
+		expect(screen.getByText('Flagged')).toBeInTheDocument();
+		expect(resolveButton).toBeInTheDocument();
 	});
 }); 

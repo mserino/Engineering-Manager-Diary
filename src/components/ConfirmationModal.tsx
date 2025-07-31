@@ -9,6 +9,7 @@ interface ConfirmationModalProps {
 	confirmText?: ReactNode;
 	cancelText?: ReactNode;
 	confirmButtonClassName?: string;
+	isConfirmDisabled?: boolean;
 }
 
 export const ConfirmationModal = ({
@@ -20,6 +21,7 @@ export const ConfirmationModal = ({
 	confirmText = 'Confirm',
 	cancelText = 'Cancel',
 	confirmButtonClassName = 'bg-red-500 hover:bg-red-600',
+	isConfirmDisabled = false,
 }: ConfirmationModalProps) => {
 	if (!isOpen) return null;
 
@@ -33,13 +35,15 @@ export const ConfirmationModal = ({
 					<div className="flex gap-3 justify-end">
 						<button
 							onClick={onClose}
-							className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 cursor-pointer"
+							disabled={isConfirmDisabled}
+							className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							{cancelText}
 						</button>
 						<button
 							onClick={onConfirm}
-							className={`px-4 py-2 text-white rounded-lg transition-colors duration-200 cursor-pointer ${confirmButtonClassName}`}
+							disabled={isConfirmDisabled}
+							className={`px-4 py-2 text-white rounded-lg transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${confirmButtonClassName}`}
 						>
 							{confirmText}
 						</button>

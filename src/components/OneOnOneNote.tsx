@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MOOD_LABELS } from "../types/Mood";
 import type { OneOnOneNote } from "../types/OneOnOneNote";
+import { ConfirmationModal } from "./ConfirmationModal";
 
 interface OneOnOneNoteProps {
 	note: OneOnOneNote;
@@ -11,25 +12,41 @@ interface OneOnOneNoteProps {
 
 export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: OneOnOneNoteProps) => {
 	const [isExpanded, setIsExpanded] = useState(false);
+	const [showResolveModal, setShowResolveModal] = useState(false);
+	const [isResolving, setIsResolving] = useState(false);
 
 	const handleCardClick = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		setIsExpanded(!isExpanded);
 	};
 
+	const handleResolveFlag = async () => {
+		if (!onUpdateFlag) return;
+		
+		setIsResolving(true);
+		try {
+			await onUpdateFlag(note.id, false, '');
+		} finally {
+			setIsResolving(false);
+			setShowResolveModal(false);
+		}
+	};
+
 	return (
-        <div
-			key={note.id}
-			className={`bg-white rounded-lg shadow-md border-l-4 cursor-pointer hover:shadow-lg transition-shadow duration-200 ${
-				note.flag ? 'border-red-500' : 'border-blue-500'
-			}`}
-			onClick={handleCardClick}
-			data-testid={`note-card-${note.id}`}
-			role="article"
-			aria-label={`Note from ${new Date(note.date).toLocaleDateString()}`}
-		>
-			<div className="p-4">
-				<div className="flex items-center justify-between">
+		<>
+			<div
+				key={note.id}
+				className={`bg-white rounded-lg shadow-md border-l-4 hover:shadow-lg transition-shadow duration-200 ${
+					note.flag ? 'border-red-500' : 'border-blue-500'
+				}`}
+				role="article"
+				aria-label={`Note from ${new Date(note.date).toLocaleDateString()}`}
+			>
+				<div
+					className="flex items-center justify-between p-4 cursor-pointer"
+					onClick={handleCardClick}
+					data-testid={`note-card-${note.id}`}
+				>
 					<div className="flex items-center space-x-4 flex-1">
 						<span className="text-2xl" aria-label={MOOD_LABELS[note.mood].ariaLabel}>
 							{note.mood}
@@ -63,9 +80,8 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: One
 						</svg>
 					</div>
 				</div>
-				
 				{isExpanded && (
-					<div className="border-t border-gray-100 mt-4 pt-4">
+					<div className="border-t border-gray-100 p-4">
 						<div className="prose prose-sm max-w-none mb-4">
 							<div className="whitespace-pre-wrap text-gray-700">{note.talkingPoints}</div>
 						</div>
@@ -85,9 +101,10 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: One
 									<button
 										onClick={(e) => {
 											e.stopPropagation();
-											onUpdateFlag(note.id, false, '');
+											setShowResolveModal(true);
 										}}
-										className="flex items-center gap-1 px-3 py-1.5 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200 cursor-pointer shadow-sm"
+										disabled={isResolving}
+										className="flex items-center gap-1 px-3 py-1.5 text-sm border-red-500 border-2 text-red-600 rounded-md hover:bg-red-500/10 hover:text-red-600 transition-colors duration-200 cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
 									>
 										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -99,7 +116,7 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: One
 						)}
 						
 						{(onEdit || onDelete || (onUpdateFlag && note.flag)) && (
-							<div className="flex gap-2 pt-3 border-t border-gray-100">
+							<div className="flex gap-2 pt-4 border-t border-gray-100 mt-4 justify-end">
 								{onEdit && (
 									<button
 										onClick={(e) => {
@@ -127,6 +144,18 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: One
 					</div>
 				)}
 			</div>
-		</div>
+
+			<ConfirmationModal
+				isOpen={showResolveModal}
+				onClose={() => setShowResolveModal(false)}
+				onConfirm={handleResolveFlag}
+				title="Resolve Flag"
+				message={`Are you sure you want to resolve the flag "${note.flagDescription}"? This will remove the flag from the note.`}
+				confirmText={isResolving ? 'Resolving...' : 'Confirm'}
+				confirmButtonClassName="bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+				cancelText="Cancel"
+				isConfirmDisabled={isResolving}
+			/>
+		</>
 	);
 };

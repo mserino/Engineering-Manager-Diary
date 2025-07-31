@@ -93,7 +93,11 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 		setDeletingNoteId(undefined);
 	};
 
-	const handleUpdateNoteFlag = async (noteId: string, flag: boolean, flagDescription?: string) => {
+	const handleUpdateNoteFlag = async (
+		noteId: string,
+		flag: boolean,
+		flagDescription?: string,
+	) => {
 		try {
 			await updateNote(noteId, { flag, flagDescription });
 		} catch {

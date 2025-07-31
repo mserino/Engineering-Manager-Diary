@@ -56,13 +56,15 @@ describe('OneOnOneNotesList', () => {
 	test('displays note information correctly', () => {
 		render(<OneOnOneNotesList notes={mockNotes} />);
 		
-		const firstNoteCard = screen.getByTestId('note-card-1');
-		expect(firstNoteCard).toHaveClass('border-blue-500'); // Not flagged
+		const firstNoteCardDiv = screen.getByTestId('note-card-1').parentElement;
+		expect(firstNoteCardDiv).not.toBeNull();
+		expect(firstNoteCardDiv).toHaveClass('border-blue-500');
 		expect(screen.getByText('1/15/2024')).toBeInTheDocument();
 		expect(screen.getByText('Created 1/15/2024')).toBeInTheDocument();
 		
-		const secondNoteCard = screen.getByTestId('note-card-2');
-		expect(secondNoteCard).toHaveClass('border-red-500'); // Flagged
+		const secondNoteCardDiv = screen.getByTestId('note-card-2').parentElement;
+		expect(secondNoteCardDiv).not.toBeNull();
+		expect(secondNoteCardDiv).toHaveClass('border-red-500');
 		expect(screen.getByText('1/10/2024')).toBeInTheDocument();
 		expect(screen.getByText('Created 1/10/2024')).toBeInTheDocument();
 		expect(screen.getByText('Flagged')).toBeInTheDocument();
@@ -71,12 +73,11 @@ describe('OneOnOneNotesList', () => {
 	test('displays flagged description when flag is true', () => {
 		render(<OneOnOneNotesList notes={mockNotes} />);
 		
-		// Expand the flagged note to see its content
 		const secondNoteCard = screen.getByTestId('note-card-2');
+
 		fireEvent.click(secondNoteCard);
 
-		// Check flag status and description
-		expect(secondNoteCard).toHaveClass('border-red-500');
+		expect(secondNoteCard.parentElement).toHaveClass('border-red-500');
 		expect(screen.getByText('Flagged')).toBeInTheDocument();
 		expect(screen.getByText('Workload is too high')).toBeInTheDocument();
 	});
@@ -117,7 +118,7 @@ describe('OneOnOneNotesList', () => {
 		expect(screen.getByText('Mark as Resolved')).toBeInTheDocument();
 	});
 
-	test('calls onUpdateFlag when Mark as Resolved is clicked', () => {
+	test('calls onUpdateFlag when Mark as Resolved is confirmed in modal', () => {
 		const { getByTestId, getByText } = render(<OneOnOneNotesList notes={mockNotes} onUpdateFlag={mockOnUpdateFlag} />);
 		
 		const secondNoteCard = getByTestId('note-card-2');
@@ -125,6 +126,9 @@ describe('OneOnOneNotesList', () => {
 		
 		const resolveButton = getByText('Mark as Resolved');
 		fireEvent.click(resolveButton);
+
+		const confirmButton = getByText('Confirm');
+		fireEvent.click(confirmButton);
 		
 		expect(mockOnUpdateFlag).toHaveBeenCalledWith(mockNotes[1]?.id, false, '');
 	});

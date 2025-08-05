@@ -1,4 +1,4 @@
-import type { OneOnOneNote } from '../types/OneOnOneNote';
+import type { ActionItem, OneOnOneNote } from '../types/OneOnOneNote';
 import { OneOnOneNoteSingle } from './OneOnOneNote';
 
 interface OneOnOneNotesListProps {
@@ -6,9 +6,10 @@ interface OneOnOneNotesListProps {
 	onDelete?: (noteId: string) => Promise<void>;
 	onEdit?: (note: OneOnOneNote) => void;
 	onUpdateFlag?: (noteId: string, flag: boolean) => Promise<void>;
+	onUpdateActionItems?: (noteId: string, actionItems: ActionItem[]) => Promise<void>;
 }
 
-export const OneOnOneNotesList = ({ notes, onDelete, onEdit, onUpdateFlag }: OneOnOneNotesListProps) => {
+export const OneOnOneNotesList = ({ notes, onDelete, onEdit, onUpdateFlag, onUpdateActionItems }: OneOnOneNotesListProps) => {
 
 	if (notes.length === 0) {
 		return (
@@ -21,7 +22,7 @@ export const OneOnOneNotesList = ({ notes, onDelete, onEdit, onUpdateFlag }: One
 	return (
 		<div className="space-y-3">
 			{notes.map((note) => (
-				<OneOnOneNoteSingle key={note.id} note={note} onDelete={onDelete} onEdit={onEdit} onUpdateFlag={onUpdateFlag} />
+				<OneOnOneNoteSingle key={note.id} note={note} onDelete={onDelete} onEdit={onEdit} onUpdateFlag={onUpdateFlag} onUpdateActionItems={onUpdateActionItems} />
 			))}
 		</div>
 	);

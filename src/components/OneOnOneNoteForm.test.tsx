@@ -13,6 +13,7 @@ const mockNote: OneOnOneNote = {
 	flag: true,
 	flagDescription: 'Need to follow up on workload concerns',
 	createdAt: '2024-01-15T10:00:00Z',
+	actionItems: [{ description: 'Action item 1', done: false }, { description: 'Action item 2', done: false }],
 };
 
 describe('OneOnOneNoteForm', () => {
@@ -133,6 +134,7 @@ describe('OneOnOneNoteForm', () => {
 				mood: MOODS.NEUTRAL,
 				flag: true,
 				flagDescription: 'Follow up needed',
+				actionItems: [],
 			});
 		});
 	});
@@ -217,5 +219,40 @@ describe('OneOnOneNoteForm', () => {
 		expect(screen.getByLabelText('Date')).toHaveValue(mockNote.date);
 		expect(screen.getByRole('checkbox', { name: 'Flag for follow-up' })).toBeChecked();
 		expect(screen.getByLabelText('Flag Description *')).toHaveValue(mockNote.flagDescription);
+	});
+
+	test('can add action items to the note', () => {
+		render(
+			<OneOnOneNoteForm
+				userId={userId}
+				onSubmit={mockOnSubmit}
+				onCancel={mockOnCancel}
+			/>
+		);
+
+		expect(screen.queryByText('Action item')).not.toBeInTheDocument();
+
+		fireEvent.change(screen.getByPlaceholderText('Add a new action item...'), {
+			target: { value: 'Action item' },
+		});
+		fireEvent.click(screen.getByText('Add'));
+
+		expect(screen.getByText('Action item')).toBeInTheDocument();
+
+		fireEvent.change(screen.getByLabelText('Talking Points *'), {
+			target: { value: 'Test talking points' },
+		});
+
+		fireEvent.click(screen.getByText('Save Note'));
+
+		expect(mockOnSubmit).toHaveBeenCalledWith({
+			userId,
+			date: '2024-01-20',
+			talkingPoints: 'Test talking points',
+			mood: MOODS.HAPPY,
+			flag: false,
+			flagDescription: '',
+			actionItems: [{ description: 'Action item', done: false }],
+		});
 	});
 }); 

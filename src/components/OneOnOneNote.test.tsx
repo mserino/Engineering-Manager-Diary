@@ -13,12 +13,14 @@ const mockNote: OneOnOneNote = {
 	flag: true,
 	flagDescription: 'Need to follow up on workload concerns',
 	createdAt: '2024-01-15T10:00:00Z',
+	actionItems: [{ description: 'Action item 1', done: false }, { description: 'Action item 2', done: false }],
 };
 
 describe('OneOnOneNoteSingle', () => {
 	const mockOnDelete = vi.fn();
 	const mockOnEdit = vi.fn();
 	const mockOnUpdateFlag = vi.fn();
+	const mockOnUpdateActionItems = vi.fn();
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -48,7 +50,7 @@ describe('OneOnOneNoteSingle', () => {
 
 		fireEvent.click(screen.getByTestId('note-card-1'));
 
-		expect(screen.getByText('Flag Reason:')).toBeInTheDocument();
+		expect(screen.getByText('Flag:')).toBeInTheDocument();
 		expect(screen.getByText('Need to follow up on workload concerns')).toBeInTheDocument();
 
 		expect(screen.getByText('Mark as Resolved')).toBeInTheDocument();
@@ -131,5 +133,24 @@ describe('OneOnOneNoteSingle', () => {
 		fireEvent.click(screen.getByText('Remove Note'));
 
 		expect(mockOnDelete).toHaveBeenCalledWith(mockNote.id);
+	});
+
+	test('shows action items when expanded', () => {
+		render(<OneOnOneNoteSingle note={mockNote} />);
+
+		fireEvent.click(screen.getByTestId('note-card-1'));
+
+		expect(screen.getByText('Action Items')).toBeInTheDocument();
+		expect(screen.getByText('Action item 1')).toBeInTheDocument();
+		expect(screen.getByText('Action item 2')).toBeInTheDocument();
+	});
+
+	test('is able to check action items as done', () => {
+		render(<OneOnOneNoteSingle note={mockNote} onUpdateActionItems={mockOnUpdateActionItems} />);
+
+		fireEvent.click(screen.getByTestId('note-card-1'));
+
+		const actionItem1 = screen.getByText('Action item 1');
+		expect(actionItem1).not.toHaveClass('line-through');
 	});
 }); 

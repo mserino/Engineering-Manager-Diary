@@ -9,7 +9,7 @@ import { OneOnOneNotesList } from './OneOnOneNotesList';
 import { Modal } from './Modal';
 import { Spinner } from './Spinner';
 import type { User } from '../types/User';
-import type { OneOnOneNote } from '../types/OneOnOneNote';
+import type { ActionItem, OneOnOneNote } from '../types/OneOnOneNote';
 
 interface UserDetailProps {
 	user: User;
@@ -100,6 +100,14 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 	) => {
 		try {
 			await updateNote(noteId, { flag, flagDescription });
+		} catch {
+			// Handle error silently or show a toast
+		}
+	};
+
+	const handleUpdateActionItems = async (noteId: string, actionItems: ActionItem[]) => {
+		try {
+			await updateNote(noteId, { actionItems });
 		} catch {
 			// Handle error silently or show a toast
 		}
@@ -218,6 +226,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 						onDelete={handleDeleteNote}
 						onEdit={handleEditNote}
 						onUpdateFlag={handleUpdateNoteFlag}
+						onUpdateActionItems={handleUpdateActionItems}
 					/>
 				)}
 			</div>

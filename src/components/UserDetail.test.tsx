@@ -239,6 +239,7 @@ describe('UserDetail', () => {
 				mood: MOODS.HAPPY,
 				flag: false,
 				flagDescription: '',
+				actionItems: [],
 			});
 		});
 	});
@@ -271,6 +272,7 @@ describe('UserDetail', () => {
 				mood: MOODS.HAPPY,
 				flag: false,
 				flagDescription: '',
+				actionItems: [],
 			});
 		});
 	});

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MOOD_LABELS } from "../types/Mood";
-import type { OneOnOneNote } from "../types/OneOnOneNote";
+import type { ActionItem, OneOnOneNote } from "../types/OneOnOneNote";
 import { ConfirmationModal } from "./ConfirmationModal";
 
 interface OneOnOneNoteProps {
@@ -8,9 +8,10 @@ interface OneOnOneNoteProps {
 	onDelete?: (noteId: string) => Promise<void>;
 	onEdit?: (note: OneOnOneNote) => void;
 	onUpdateFlag?: (noteId: string, flag: boolean, flagDescription?: string) => Promise<void>;
+	onUpdateActionItems?: (noteId: string, actionItems: ActionItem[]) => Promise<void>;
 }
 
-export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: OneOnOneNoteProps) => {
+export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag, onUpdateActionItems }: OneOnOneNoteProps) => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [showResolveModal, setShowResolveModal] = useState(false);
 	const [isResolving, setIsResolving] = useState(false);
@@ -30,6 +31,14 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: One
 			setIsResolving(false);
 			setShowResolveModal(false);
 		}
+	};
+
+	const handleActionItemChange = (index: number) => {
+		const newActionItems = [...(note.actionItems || [])];
+		if (newActionItems[index]) {
+			newActionItems[index].done = !newActionItems[index].done;
+		}
+		onUpdateActionItems?.(note.id, newActionItems);
 	};
 
 	return (
@@ -89,6 +98,30 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: One
 							<div className="whitespace-pre-wrap text-gray-700">{note.talkingPoints}</div>
 						</div>
 
+						{note.actionItems && note.actionItems.length > 0 && (
+							<div className="prose prose-sm max-w-none mb-4">
+								<h3 className="text-lg font-semibold text-gray-900 mb-3">Action Items</h3>
+								<ul className="space-y-2">
+									{note.actionItems.map((item, index) => (
+										<li key={index} className="group">
+											<label htmlFor={`action-item-${index}`} className="flex items-center gap-3 p-2 rounded hover:bg-gray-50 transition-colors duration-200">
+												<input 
+													id={`action-item-${index}`} 
+													type="checkbox" 
+													checked={item.done} 
+													onChange={() => handleActionItemChange(index)} 
+													className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-colors duration-200" 
+												/>
+												<span className={`text-gray-700 ${item.done ? 'line-through text-gray-400' : ''} transition-colors duration-200`}>
+													{item.description}
+												</span>
+											</label>
+										</li>
+									))}
+								</ul>
+							</div>
+						)}
+
 						{note.flagDescription && note.flag && (
 							<div className="mt-4 bg-red-50 rounded-lg p-4 flex items-center justify-between gap-4">
 								<div className="flex items-center gap-2">
@@ -96,7 +129,7 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag }: One
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
 									</svg>
 									<div>
-										<span className="font-medium text-red-800">Flag Reason:</span>
+										<span className="font-medium text-red-800">Flag:</span>
 										<p className="text-red-700">{note.flagDescription}</p>
 									</div>
 								</div>

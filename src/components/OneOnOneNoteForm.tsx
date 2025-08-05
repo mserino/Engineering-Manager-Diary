@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import type { OneOnOneNote } from '../types/OneOnOneNote';
+import React, { useState, useEffect } from 'react';
+import type { ActionItem, OneOnOneNote } from '../types/OneOnOneNote';
 import { MOODS, MOOD_LABELS, type MoodType } from '../types/Mood';
 
 interface OneOnOneNoteFormProps {
@@ -24,15 +24,18 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 		mood: MoodType;
 		flag: boolean;
 		flagDescription?: string;
+		actionItems: ActionItem[];
 	}>({
 		date: note?.date || today,
 		talkingPoints: note?.talkingPoints || '',
 		mood: note?.mood || MOODS.HAPPY,
 		flag: note?.flag || false,
 		flagDescription: note?.flagDescription || '',
+		actionItems: note?.actionItems || [],
 	});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [newActionItem, setNewActionItem] = useState('');
 
 	// Update form data when note prop changes
 	useEffect(() => {
@@ -43,6 +46,7 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 				mood: note.mood,
 				flag: note.flag,
 				flagDescription: note.flagDescription || '',
+				actionItems: note.actionItems || [],
 			});
 		}
 	}, [note]);
@@ -62,6 +66,13 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 		}));
 	};
 
+	const handleRemoveActionItem = (index: number) => {
+		setFormData(prev => ({
+			...prev,
+			actionItems: prev.actionItems.filter((_, i) => i !== index),
+		}));
+	};
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
@@ -75,6 +86,7 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 				mood: formData.mood,
 				flag: formData.flag,
 				flagDescription: formData.flagDescription,
+				actionItems: formData.actionItems,
 			});
 			onCancel();
 		} catch {
@@ -115,22 +127,6 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 				</div>
 
 				<div>
-					<label htmlFor="talkingPoints" className="block text-sm font-medium text-gray-700 mb-2">
-						Talking Points <span className="text-red-500">*</span>
-					</label>
-					<textarea
-						id="talkingPoints"
-						name="talkingPoints"
-						value={formData.talkingPoints}
-						onChange={handleChange}
-						required
-						rows={6}
-						className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-						placeholder="What did you discuss? Any action items? How did the conversation go?"
-					/>
-				</div>
-
-				<div>
 					<label className="block text-sm font-medium text-gray-700 mb-3">
 						Mood
 					</label>
@@ -158,6 +154,85 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 								<span className="text-sm text-gray-600">{option.label}</span>
 							</label>
 						))}
+					</div>
+				</div>
+
+				<div>
+					<label htmlFor="talkingPoints" className="block text-sm font-medium text-gray-700 mb-2">
+						Talking Points <span className="text-red-500">*</span>
+					</label>
+					<textarea
+						id="talkingPoints"
+						name="talkingPoints"
+						value={formData.talkingPoints}
+						onChange={handleChange}
+						required
+						rows={6}
+						className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+						placeholder="What did you discuss? Any action items? How did the conversation go?"
+					/>
+				</div>
+
+				<div>
+					<label className="block text-sm font-medium text-gray-700 mb-3">
+						Action Items
+						<span className="ml-2 text-sm text-gray-500 font-normal">Press Enter to add new item</span>
+					</label>
+					<div className="space-y-2">
+						<div className="flex items-center gap-2">
+							<input
+								type="text"
+								id="action-item-input"
+								placeholder="Add a new action item..."
+								value={newActionItem}
+								onChange={(e) => setNewActionItem(e.target.value)}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter' && newActionItem.trim()) {
+										e.preventDefault();
+										setFormData(prev => ({
+											...prev,
+											actionItems: [...prev.actionItems, { description: newActionItem.trim(), done: false }	]
+										}));
+										setNewActionItem('');
+									}
+								}}
+								className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+							/>
+							<button
+								type="button"
+								onClick={() => {
+									if (newActionItem.trim()) {
+										setFormData(prev => ({
+											...prev,
+											actionItems: [...prev.actionItems, { description: newActionItem.trim(), done: false }]
+										}));
+										setNewActionItem('');
+									}
+								}}
+								className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
+							>
+								Add
+							</button>
+						</div>
+						{formData.actionItems.length > 0 && (
+							<div className="mt-3 space-y-2">
+								{formData.actionItems.map((item, index) => (
+									<div key={index} className="group flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
+										<span className="flex-grow">{item.description}</span>
+										<button
+											aria-label="Remove action item"
+											type="button"
+											onClick={() => handleRemoveActionItem(index)}
+											className="text-red-600 hover:text-red-700 transition-all duration-200 cursor-pointer	"
+										>
+											<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+												<path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+											</svg>
+										</button>
+									</div>
+								))}
+							</div>
+						)}
 					</div>
 				</div>
 

@@ -36,6 +36,7 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [newActionItem, setNewActionItem] = useState('');
+	const [newActionItemDueDate, setNewActionItemDueDate] = useState('');
 
 	// Update form data when note prop changes
 	useEffect(() => {
@@ -51,7 +52,7 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 		}
 	}, [note]);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLInputElement>) => {
 		const { name, value, type } = e.target;
 		setFormData(prev => ({
 			...prev,
@@ -174,39 +175,54 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 				</div>
 
 				<div>
-					<label className="block text-sm font-medium text-gray-700 mb-3">
-						Action Items
-						<span className="ml-2 text-sm text-gray-500 font-normal">Press Enter to add new item</span>
-					</label>
+					<div className="flex flex-col gap-1 mb-4">
+						<span className="text-sm font-medium text-gray-700">Action Items</span>
+						<span className="text-sm text-gray-500 font-normal">Press Enter to add new item.</span>
+					</div>
 					<div className="space-y-2">
-						<div className="flex items-center gap-2">
-							<input
-								type="text"
-								id="action-item-input"
-								placeholder="Add a new action item..."
-								value={newActionItem}
-								onChange={(e) => setNewActionItem(e.target.value)}
-								onKeyDown={(e) => {
-									if (e.key === 'Enter' && newActionItem.trim()) {
-										e.preventDefault();
-										setFormData(prev => ({
-											...prev,
-											actionItems: [...prev.actionItems, { description: newActionItem.trim(), done: false }	]
-										}));
-										setNewActionItem('');
-									}
-								}}
-								className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-							/>
+						<div className="flex justify-between items-end gap-2 mb-4">
+							<div className="flex flex-col gap-2 w-full">
+								<label htmlFor="action-item-input" className="block text-sm font-medium text-gray-700">Action item</label>
+								<input
+									type="text"
+									id="action-item-input"
+									placeholder="Add a new action item..."
+									value={newActionItem}
+									onChange={(e) => setNewActionItem(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === 'Enter' && newActionItem.trim()) {
+											e.preventDefault();
+											setFormData(prev => ({
+												...prev,
+												actionItems: [...prev.actionItems, { description: newActionItem.trim(), done: false, dueDate: newActionItemDueDate }	]
+											}));
+											setNewActionItem('');
+										}
+									}}
+									className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+								/>
+							</div>
+							<div className="flex flex-col gap-2">
+								<label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">Due date</label>
+								<input
+									type="date"
+									id="dueDate"
+									name="dueDate"
+									value={newActionItemDueDate}
+									onChange={(e) => setNewActionItemDueDate(e.target.value)}
+									className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+								/>
+							</div>
 							<button
 								type="button"
 								onClick={() => {
 									if (newActionItem.trim()) {
 										setFormData(prev => ({
 											...prev,
-											actionItems: [...prev.actionItems, { description: newActionItem.trim(), done: false }]
+											actionItems: [...prev.actionItems, { description: newActionItem.trim(), done: false, dueDate: newActionItemDueDate }]
 										}));
 										setNewActionItem('');
+										setNewActionItemDueDate('');
 									}
 								}}
 								className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
@@ -217,8 +233,13 @@ export const OneOnOneNoteForm = ({ userId, onSubmit, onCancel, note }: OneOnOneN
 						{formData.actionItems.length > 0 && (
 							<div className="mt-3 space-y-2">
 								{formData.actionItems.map((item, index) => (
-									<div key={index} className="group flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
-										<span className="flex-grow">{item.description}</span>
+									<div key={index} className="group flex items-center justify-between gap-2 bg-gray-50 p-2 rounded-lg">
+										<div className="flex flex-row gap-1 items-center">
+											<span className="flex-grow">{item.description}</span>
+											{item.dueDate && (
+												<span className="text-xs text-gray-500">(Due: {new Date(item.dueDate).toLocaleDateString()})</span>
+											)}
+										</div>
 										<button
 											aria-label="Remove action item"
 											type="button"

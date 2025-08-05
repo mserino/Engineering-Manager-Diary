@@ -153,4 +153,12 @@ describe('OneOnOneNoteSingle', () => {
 		const actionItem1 = screen.getByText('Action item 1');
 		expect(actionItem1).not.toHaveClass('line-through');
 	});
+
+	test('shows due date for action items', () => {
+		render(<OneOnOneNoteSingle note={mockNote} />);
+
+		fireEvent.click(screen.getByTestId('note-card-1'));
+
+		expect(screen.getByText('(Due: 1/20/2024)')).toBeInTheDocument();
+	});
 }); 

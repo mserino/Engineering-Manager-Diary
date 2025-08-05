@@ -3,6 +3,7 @@ import type { MoodType } from './Mood';
 export interface ActionItem {
 	description: string;
 	done: boolean;
+	dueDate?: string;
 }
 
 export interface OneOnOneNote {

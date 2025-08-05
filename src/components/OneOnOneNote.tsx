@@ -115,6 +115,9 @@ export const OneOnOneNoteSingle = ({ note, onDelete, onEdit, onUpdateFlag, onUpd
 												<span className={`text-gray-700 ${item.done ? 'line-through text-gray-400' : ''} transition-colors duration-200`}>
 													{item.description}
 												</span>
+												{item.dueDate && (
+													<span className={`text-xs text-gray-500 ${item.done ? 'line-through text-gray-400' : ''} transition-colors duration-200`}>(Due: {new Date(item.dueDate).toLocaleDateString()})</span>
+												)}
 											</label>
 										</li>
 									))}

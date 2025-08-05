@@ -13,7 +13,7 @@ const mockNote: OneOnOneNote = {
 	flag: true,
 	flagDescription: 'Need to follow up on workload concerns',
 	createdAt: '2024-01-15T10:00:00Z',
-	actionItems: [{ description: 'Action item 1', done: false }, { description: 'Action item 2', done: false }],
+	actionItems: [{ description: 'Action item 1', done: false, dueDate: '2024-01-20' }, { description: 'Action item 2', done: false, dueDate: '2024-01-20' }],
 };
 
 describe('OneOnOneNoteForm', () => {
@@ -230,15 +230,19 @@ describe('OneOnOneNoteForm', () => {
 			/>
 		);
 
-		expect(screen.queryByText('Action item')).not.toBeInTheDocument();
+		// Verify no action items initially
+		expect(screen.queryByText('Action item Test')).not.toBeInTheDocument();
 
+		// Add an action item
 		fireEvent.change(screen.getByPlaceholderText('Add a new action item...'), {
-			target: { value: 'Action item' },
+			target: { value: 'Action item Test' },
 		});
 		fireEvent.click(screen.getByText('Add'));
 
-		expect(screen.getByText('Action item')).toBeInTheDocument();
+		// Verify action item appears
+		expect(screen.getByText('Action item Test')).toBeInTheDocument();
 
+		// Fill in required fields and submit
 		fireEvent.change(screen.getByLabelText('Talking Points *'), {
 			target: { value: 'Test talking points' },
 		});
@@ -252,7 +256,28 @@ describe('OneOnOneNoteForm', () => {
 			mood: MOODS.HAPPY,
 			flag: false,
 			flagDescription: '',
-			actionItems: [{ description: 'Action item', done: false }],
+			actionItems: [{ description: 'Action item Test', done: false, dueDate: '' }],
 		});
+	});
+
+	test('action items have a due date', () => {
+		render(
+			<OneOnOneNoteForm
+				userId={userId}
+				onSubmit={mockOnSubmit}
+				onCancel={mockOnCancel}
+			/>
+		);
+
+		fireEvent.change(screen.getByPlaceholderText('Add a new action item...'), {
+			target: { value: 'Action item Test' },
+		});
+		fireEvent.change(screen.getByLabelText('Due date'), {
+			target: { value: '2024-01-20' },
+		});
+		fireEvent.click(screen.getByText('Add'));
+
+		expect(screen.getByText('Action item Test')).toBeInTheDocument();
+		expect(screen.getByText('(Due: 1/20/2024)')).toBeInTheDocument();
 	});
 }); 
